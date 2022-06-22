@@ -26,29 +26,6 @@ import Select from "components/Select";
 import ImageUploader from "./ImageUploader";
 import { CARD_PLACEHOLDER_IMAGE } from "api/RequestInterceptor";
 
-const validationSchema = Yup.object().shape({
-  Name: Yup.string().required("Required"),
-  ServingSize: Yup.number().required("Required").typeError("Invalid number"),
-  Sugar: Yup.number().required("Required").typeError("Invalid number"),
-  Fiber: Yup.number().required("Required").typeError("Invalid number"),
-  Sodium: Yup.number().required("Required").typeError("Invalid number"),
-  NetCarbs: Yup.number().required("Required").typeError("Invalid number"),
-  SatFat: Yup.number().required("Required").typeError("Invalid number"),
-  Protein: Yup.number().required("Required").typeError("Invalid number"),
-  TotalCarbs: Yup.number().required("Required").typeError("Invalid number"),
-  Calories: Yup.number().required("Required").typeError("Invalid number"),
-  fat: Yup.number().required("Required").typeError("Invalid number"),
-  allergyFood: Yup.array()
-    .min(1, "Select atleast one allergy food")
-    .of(Yup.string().required())
-    .required(),
-  // TC: Yup.number().required("Required").typeError("Invalid number"),
-  // SR: Yup.number().required("Required").typeError("Invalid number"),
-  Cuisine: Yup.string().required("Required"),
-  Category: Yup.string().required("Required"),
-  // ImageFile: Yup.mixed().required("Required"),
-});
-
 const TABS = {
   ALL: "all",
   GROCERY: "Grocery",
@@ -115,6 +92,34 @@ const SelectFood = ({
   const [isAllergy, setIsAllergy] = useState(false);
   const [phase, setPhase] = useState(1);
   const [allergyFood, setAllergyFood] = useState([]);
+  const allDiets = useSelector((state) => state.diets.data);
+  const diet = allDiets.find((f) => f.Id == planId);
+
+  const validationSchema = Yup.object().shape({
+    Name: Yup.string().required("Required"),
+    ServingSize: Yup.number().required("Required").typeError("Invalid number"),
+    Sugar: Yup.number().required("Required").typeError("Invalid number"),
+    Fiber: Yup.number().required("Required").typeError("Invalid number"),
+    Sodium: Yup.number().required("Required").typeError("Invalid number"),
+    NetCarbs: Yup.number().required("Required").typeError("Invalid number"),
+    SatFat: Yup.number().required("Required").typeError("Invalid number"),
+    Protein: Yup.number().required("Required").typeError("Invalid number"),
+    TotalCarbs: Yup.number().required("Required").typeError("Invalid number"),
+    Calories: Yup.number().required("Required").typeError("Invalid number"),
+    fat: Yup.number().required("Required").typeError("Invalid number"),
+    AllergicFood: isAllergy
+      ? Yup.array()
+          .min(1, "Select atleast one allergy food")
+          .of(Yup.string().required())
+          .required()
+      : Yup.array(),
+    // TC: Yup.number().required("Required").typeError("Invalid number"),
+    // SR: Yup.number().required("Required").typeError("Invalid number"),
+    Cuisine: Yup.string().required("Required"),
+    Category: Yup.string().required("Required"),
+    // ImageFile: Yup.mixed().required("Required"),
+  });
+
   const dummies = [
     "Pork",
     "Beef",
@@ -145,8 +150,8 @@ const SelectFood = ({
     DetailsDesc: "",
     Description: "",
     ingredients: ["", "", ""],
-    Cuisine: "",
-    Category: "",
+    Cuisine: diet.Cuisine,
+    Category: diet.Description,
     Sugar: "",
     Fiber: "",
     Sodium: "",
@@ -157,7 +162,7 @@ const SelectFood = ({
     Calories: "",
     fat: "",
     Items: [],
-    allergyFood: [],
+    AllergicFood: [],
     Grocery: [
       {
         title: "Breads and Cereals",
@@ -416,11 +421,11 @@ const SelectFood = ({
       throw ex;
     }
   };
-  const handleAllergies = (x) => {
-    if (allergyFood.includes(x)) {
-      setAllergyFood(allergyFood.filter((e) => e !== x));
-    } else setAllergyFood((oldArray) => [...oldArray, x]);
-  };
+  // const handleAllergies = (x) => {
+  //   if (allergyFood.includes(x)) {
+  //     setAllergyFood(allergyFood.filter((e) => e !== x));
+  //   } else setAllergyFood((oldArray) => [...oldArray, x]);
+  // };
   return (
     <Formik
       initialValues={initialValues}
@@ -440,7 +445,6 @@ const SelectFood = ({
             return false;
           }
           let values = { ...originalValues };
-          console.log("VALUES", values);
           // values.phase = values.Day = selectedDay;
           values.phase = phase;
           values.Grocery = values.Grocery.map((m) => {
@@ -481,7 +485,7 @@ const SelectFood = ({
           values.DetailsDesc = JSON.stringify([...values.ingredients]);
           values.Description = values.Description;
           values.IsAllergic = isAllergy;
-          values.AllergicFood = JSON.stringify(allergyFood);
+          // values.AllergicFood = JSON.stringify(allergyFood);
           values.Grocery = JSON.stringify(values.Grocery);
           values.GroceryList = new Blob([JSON.stringify({ grocery: [] })], {
             type: "application/json",
@@ -492,17 +496,17 @@ const SelectFood = ({
           if (hasError) {
             return false;
           }
-          // if (foodId) {
-          //   const res = await updateFood({ ...values, FoodId: foodId });
-          //   if (res) {
-          //     await saveFoodPlan(foodId, values.ServingSize);
-          //   }
-          //   return false;
-          // }
-          // const savedFoodId = await saveFood(values);
-          // if (savedFoodId) {
-          //   await saveFoodPlan(savedFoodId, values.ServingSize);
-          // }
+          if (foodId) {
+            const res = await updateFood({ ...values, FoodId: foodId });
+            if (res) {
+              await saveFoodPlan(foodId, values.ServingSize);
+            }
+            return false;
+          }
+          const savedFoodId = await saveFood(values);
+          if (savedFoodId) {
+            await saveFoodPlan(savedFoodId, values.ServingSize);
+          }
 
           // const detailsSaved = await saveFoodDetails(values);
           // if (!detailsSaved) {
@@ -854,16 +858,35 @@ const SelectFood = ({
                       </div>
                     </div>
                     {isAllergy && (
-                      <div className={styles.allergyFood}>
+                      <div
+                        className={styles.allergyFood}
+                        style={{
+                          border: errors["AllergicFood"] && "1px solid #dc3545",
+                        }}
+                      >
                         {dummies?.map((x) => {
                           return (
-                            <div onClick={() => handleAllergies(x)}>
+                            <div
+                              onClick={(e) => {
+                                if (e.target.checked) {
+                                  let data = [...values["AllergicFood"], x];
+                                  setFieldValue("AllergicFood", data);
+                                } else {
+                                  let data = [...values["AllergicFood"]];
+                                  let index = data.indexOf(x);
+                                  if (index !== -1) {
+                                    data.splice(index, 1);
+                                    setFieldValue("AllergicFood", data);
+                                  }
+                                }
+                              }}
+                            >
                               <input
                                 className="form-check-input"
                                 type="checkbox"
                                 value=""
                                 id={"flexCheckChecked" + x}
-                                checked={allergyFood.includes(x)}
+                                checked={values.AllergicFood.includes(x)}
                               />
                               <label
                                 for="flexCheckChecked"
