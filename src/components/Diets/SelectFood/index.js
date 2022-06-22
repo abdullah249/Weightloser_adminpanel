@@ -32,13 +32,18 @@ const validationSchema = Yup.object().shape({
   Sugar: Yup.number().required("Required").typeError("Invalid number"),
   Fiber: Yup.number().required("Required").typeError("Invalid number"),
   Sodium: Yup.number().required("Required").typeError("Invalid number"),
+  NetCarbs: Yup.number().required("Required").typeError("Invalid number"),
   SatFat: Yup.number().required("Required").typeError("Invalid number"),
   Protein: Yup.number().required("Required").typeError("Invalid number"),
-  Carbs: Yup.number().required("Required").typeError("Invalid number"),
+  TotalCarbs: Yup.number().required("Required").typeError("Invalid number"),
   Calories: Yup.number().required("Required").typeError("Invalid number"),
   fat: Yup.number().required("Required").typeError("Invalid number"),
-  TC: Yup.number().required("Required").typeError("Invalid number"),
-  SR: Yup.number().required("Required").typeError("Invalid number"),
+  allergyFood: Yup.array()
+    .min(1, "Select atleast one allergy food")
+    .of(Yup.string().required())
+    .required(),
+  // TC: Yup.number().required("Required").typeError("Invalid number"),
+  // SR: Yup.number().required("Required").typeError("Invalid number"),
   Cuisine: Yup.string().required("Required"),
   Category: Yup.string().required("Required"),
   // ImageFile: Yup.mixed().required("Required"),
@@ -65,8 +70,8 @@ export const nutritions = [
     title: "Fiber (g)",
   },
   {
-    name: "Carbs",
-    title: "Carbs (g)",
+    name: "TotalCarbs",
+    title: "Total Carbs (g)",
   },
   {
     name: "SatFat",
@@ -83,6 +88,10 @@ export const nutritions = [
   {
     name: "Sodium",
     title: "Sodium",
+  },
+  {
+    name: "NetCarbs",
+    title: "Net Carbs (g)",
   },
 ];
 
@@ -104,30 +113,51 @@ const SelectFood = ({
   const [cuisines, setCuisines] = useState([]);
   const [categotries, setCategories] = useState([]);
   const [isAllergy, setIsAllergy] = useState(false);
+  const [phase, setPhase] = useState(1);
   const [allergyFood, setAllergyFood] = useState([]);
-  const dummies = ['Pork', 'Beef', 'Chicken', 'Turkey', 'Lamb', 'Goat', 'Diary', 'Eggs', 'Soy', 'Nuts', 'Bread', 'Fruits', 
-  'Non-starchy', 'Pasta', 'Legumes', 'Beans', 'Starchy vegetables', 'Seafood', 'Dairy', 'Rice'];
+  const dummies = [
+    "Pork",
+    "Beef",
+    "Chicken",
+    "Turkey",
+    "Lamb",
+    "Goat",
+    "Diary",
+    "Eggs",
+    "Soy",
+    "Nuts",
+    "Bread",
+    "Fruits",
+    "Non-starchy",
+    "Pasta",
+    "Legumes",
+    "Beans",
+    "Starchy vegetables",
+    "Seafood",
+    "Dairy",
+    "Rice",
+  ];
   const [initialValues, setInitialValues] = useState({
     Name: "",
     ImageFile: null,
     Day: [],
     ServingSize: selectedFood?.ServingSize,
     DetailsDesc: "",
-    Description:'',
+    Description: "",
     ingredients: ["", "", ""],
     Cuisine: "",
     Category: "",
     Sugar: "",
     Fiber: "",
     Sodium: "",
+    NetCarbs: "",
     SatFat: "",
     Protein: "",
-    Carbs: "",
+    TotalCarbs: "",
     Calories: "",
     fat: "",
-    TC: "",
-    SR: "",
     Items: [],
+    allergyFood: [],
     Grocery: [
       {
         title: "Breads and Cereals",
@@ -268,8 +298,8 @@ const SelectFood = ({
       } catch (err) {
         foodData.ingredients = [...initialValues.ingredients];
       }
-      setIsAllergy(foodData.IsAllergic)
-      setAllergyFood(JSON.parse(foodData.AllergicFood))
+      setIsAllergy(foodData.IsAllergic);
+      setAllergyFood(JSON.parse(foodData.AllergicFood));
       setInitialValues(foodData);
     } catch (ex) {
       console.error("Error in fetching food details", ex.message);
@@ -387,10 +417,10 @@ const SelectFood = ({
     }
   };
   const handleAllergies = (x) => {
-    if(allergyFood.includes(x)) {
-      setAllergyFood(allergyFood.filter(e => e !== x));
-    } else setAllergyFood(oldArray => [...oldArray, x])
-  }
+    if (allergyFood.includes(x)) {
+      setAllergyFood(allergyFood.filter((e) => e !== x));
+    } else setAllergyFood((oldArray) => [...oldArray, x]);
+  };
   return (
     <Formik
       initialValues={initialValues}
@@ -410,7 +440,9 @@ const SelectFood = ({
             return false;
           }
           let values = { ...originalValues };
-          values.Day = selectedDay;
+          console.log("VALUES", values);
+          // values.phase = values.Day = selectedDay;
+          values.phase = phase;
           values.Grocery = values.Grocery.map((m) => {
             return { ...m, items: m.items.filter((f) => f) };
           });
@@ -460,17 +492,17 @@ const SelectFood = ({
           if (hasError) {
             return false;
           }
-          if (foodId) {
-            const res = await updateFood({ ...values, FoodId: foodId });
-            if (res) {
-              await saveFoodPlan(foodId, values.ServingSize);
-            }
-            return false;
-          }
-          const savedFoodId = await saveFood(values);
-          if (savedFoodId) {
-            await saveFoodPlan(savedFoodId, values.ServingSize);
-          }
+          // if (foodId) {
+          //   const res = await updateFood({ ...values, FoodId: foodId });
+          //   if (res) {
+          //     await saveFoodPlan(foodId, values.ServingSize);
+          //   }
+          //   return false;
+          // }
+          // const savedFoodId = await saveFood(values);
+          // if (savedFoodId) {
+          //   await saveFoodPlan(savedFoodId, values.ServingSize);
+          // }
 
           // const detailsSaved = await saveFoodDetails(values);
           // if (!detailsSaved) {
@@ -636,7 +668,7 @@ const SelectFood = ({
                     <div className={styles.quantities}>
                       <QuantityLabel
                         title="Carbs"
-                        quantity={values?.Carbs}
+                        quantity={values?.TotalCarbs}
                         left={0}
                       />
                       <QuantityLabel
@@ -654,7 +686,8 @@ const SelectFood = ({
                         quantity={
                           Number(values?.Sodium) +
                           Number(values?.Fiber) +
-                          Number(values?.SatFat)
+                          Number(values?.SatFat) +
+                          Number(values?.NetCarbs)
                         }
                         left={0}
                       />
@@ -668,7 +701,7 @@ const SelectFood = ({
                         error={touched["ServingSize"] && errors["ServingSize"]}
                         onBlur={handleBlur}
                         variant="outlined"
-                        unit="grams"
+                        unit=""
                         name="ServingSize"
                         type="number"
                         value={values["ServingSize"]}
@@ -692,7 +725,7 @@ const SelectFood = ({
                         ))}
                       </div>
                     </div> */}
-                    <div className={styles.info}>
+                    {/* <div className={styles.info}>
                       <Typography
                         variant="body_bold"
                         block
@@ -720,7 +753,7 @@ const SelectFood = ({
                           error={touched["SR"] && errors["SR"]}
                         />
                       </div>
-                    </div>
+                    </div> */}
                     <div className={styles.selects}>
                       <Select
                         previewMode={previewMode}
@@ -780,66 +813,112 @@ const SelectFood = ({
                   </div>
                   <div className={styles.allergy}>
                     <div className={styles.allergyCheck}>
-                    <Typography variant="body_bold">Pick any allergy</Typography>
-                    <div className="form-check" onClick={()=>setIsAllergy(true)}>
-                      <input 
-                        className="form-check-input"
-                        type="radio"
-                        name="flexRadioDefault" 
-                        id="flexRadioDefault1"
-                        checked={isAllergy}
+                      <Typography variant="body_bold">
+                        Pick any allergy
+                      </Typography>
+                      <div
+                        className="form-check"
+                        onClick={() => setIsAllergy(true)}
+                      >
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name="flexRadioDefault"
+                          id="flexRadioDefault1"
+                          checked={isAllergy}
                         />
-                      <label className="form-check-label" for="flexRadioDefault1">
-                        Yes
-                      </label>
-                    </div>
-                    <div className="form-check" onClick={()=>setIsAllergy(false)}>
-                      <input 
-                        className="form-check-input"
-                        type="radio"
-                        name="flexRadioDefault" 
-                        id="flexRadioDefault2"
-                        checked={!isAllergy}
-                        />
-                      <label className="form-check-label" for="flexRadioDefault2">
-                        No
-                      </label>
-                    </div>
-                    </div>
-                    {isAllergy && <div className={styles.allergyFood}>
-                      {dummies?.map(x=>{
-                        return <div  
-                        onClick={()=>handleAllergies(x)}
+                        <label
+                          className="form-check-label"
+                          for="flexRadioDefault1"
                         >
-                        <input 
-                        className="form-check-input" 
-                        type="checkbox" 
-                        value="" 
-                        id={"flexCheckChecked" + x} 
-                        checked={allergyFood.includes(x)}/>
-                        <label for="flexCheckChecked" className={styles.allergyItems}>
-                          {x}
+                          Yes
                         </label>
                       </div>
-                      })}
-                      
-                    </div>}
+                      <div
+                        className="form-check"
+                        onClick={() => setIsAllergy(false)}
+                      >
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name="flexRadioDefault"
+                          id="flexRadioDefault2"
+                          checked={!isAllergy}
+                        />
+                        <label
+                          className="form-check-label"
+                          for="flexRadioDefault2"
+                        >
+                          No
+                        </label>
+                      </div>
+                    </div>
+                    {isAllergy && (
+                      <div className={styles.allergyFood}>
+                        {dummies?.map((x) => {
+                          return (
+                            <div onClick={() => handleAllergies(x)}>
+                              <input
+                                className="form-check-input"
+                                type="checkbox"
+                                value=""
+                                id={"flexCheckChecked" + x}
+                                checked={allergyFood.includes(x)}
+                              />
+                              <label
+                                for="flexCheckChecked"
+                                className={styles.allergyItems}
+                              >
+                                {x}
+                              </label>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
 
-                  <div className={styles.description}>
-                      <Typography variant="body_bold" className="mb-1" block>
-                        Description
-                      </Typography>
-                      <Input
-                        onBlur={handleBlur}
-                        variant="outlined"
-                        name="Description"
-                        type="text"
-                        value={values["Description"]}
-                        onChange={handleChange}
-                      />
+                  {/* Phases */}
+                  <div className={styles.allergy}>
+                    <div className={styles.allergyCheck}>
+                      <Typography variant="body_bold">Phases</Typography>
+                      {[1, 2, 3, 4].map((value) => (
+                        <div
+                          className="form-check"
+                          onClick={() => setPhase(value)}
+                        >
+                          <input
+                            className="form-check-input"
+                            type="radio"
+                            name="flexRadioPhase"
+                            id={`flexRadioPhase${value}`}
+                            checked={phase === value ? true : false}
+                          />
+                          <label
+                            className="form-check-label"
+                            for={`flexRadioPhase${value}`}
+                          >
+                            {value}
+                          </label>
+                        </div>
+                      ))}
                     </div>
-                 
+                  </div>
+
+                  {/* <div className={styles.description}>
+                    <Typography variant="body_bold" className="mb-1" block>
+                      Description
+                    </Typography>
+                    <Input
+                      onBlur={handleBlur}
+                      variant="outlined"
+                      name="Description"
+                      type="text"
+                      value={values["Description"]}
+                      onChange={handleChange}
+                    />
+                  </div> */}
+
                   <div className={styles.meta}>
                     <div
                       className={classNames(
