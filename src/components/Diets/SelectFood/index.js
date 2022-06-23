@@ -402,7 +402,7 @@ const SelectFood = ({
       }
     } catch (ex) {}
   };
-  const saveFoodPlan = async (savedFoodId, ServingSize) => {
+  const saveFoodPlan = async (savedFoodId, ServingSize, phase) => {
     try {
       const { data: res } = await api.post(API_URLS.diet.addFoodPlan, {
         FoodId: savedFoodId,
@@ -410,6 +410,7 @@ const SelectFood = ({
         Day: String(selectedDay),
         MealType: activeMealType,
         ServingSize: ServingSize,
+        Phase: phase,
       });
       if (res) {
         toast.success("Food plan saved");
@@ -446,7 +447,7 @@ const SelectFood = ({
           }
           let values = { ...originalValues };
           // values.phase = values.Day = selectedDay;
-          values.phase = phase;
+          values.AllergicFood = JSON.stringify([...values.AllergicFood]);
           values.Grocery = values.Grocery.map((m) => {
             return { ...m, items: m.items.filter((f) => f) };
           });
@@ -499,13 +500,13 @@ const SelectFood = ({
           if (foodId) {
             const res = await updateFood({ ...values, FoodId: foodId });
             if (res) {
-              await saveFoodPlan(foodId, values.ServingSize);
+              await saveFoodPlan(foodId, values.ServingSize, phase);
             }
             return false;
           }
           const savedFoodId = await saveFood(values);
           if (savedFoodId) {
-            await saveFoodPlan(savedFoodId, values.ServingSize);
+            await saveFoodPlan(savedFoodId, values.ServingSize, phase);
           }
 
           // const detailsSaved = await saveFoodDetails(values);
