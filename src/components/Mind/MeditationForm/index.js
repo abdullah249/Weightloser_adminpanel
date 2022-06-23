@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Input from "components/Input";
 import styles from "./MeditationForm.module.scss";
+import { useSelector, useDispatch } from "react-redux";
 import ImageUploader from "components/molecules/ImageUploader/Linear";
 import LargeImageUploader from "components/molecules/ImageUploader";
 import Select from "components/Select";
@@ -15,6 +16,7 @@ import { apiFormData } from "api/RequestInterceptor";
 import { API_URLS } from "utils/API_URLS";
 import * as Yup from "yup";
 import TextArea from "components/TextArea";
+import { fetchMindCategories } from "redux/reducers/mind.reducer";
 
 const validationSchema = Yup.object().shape({
   Title: Yup.string().required("Required"),
@@ -26,6 +28,9 @@ const validationSchema = Yup.object().shape({
 export const TIMES = ["Morning", "Noon", "Evening", "Night"];
 
 const MeditationFOrm = ({ meditationId }) => {
+  const dispatch = useDispatch();
+  const mindCatData = useSelector((state) => state.mind.mindCategories);
+  const [mindCategories, setMindCategories] = useState([]);
   const [currentPlanId, setCurrentPlanId] = useState(meditationId);
   const [selectedDay, setSelectedDay] = useState(1);
   const [numOfDays, setNumOfDays] = useState(2);
@@ -38,6 +43,14 @@ const MeditationFOrm = ({ meditationId }) => {
     ImageFile: null,
     sets: 0,
   });
+
+  useEffect(() => {
+    dispatch(fetchMindCategories());
+  }, []);
+
+  useEffect(() => {
+    setMindCategories([...mindCatData]);
+  }, [meditationId, mindCatData]);
 
   const savePlan = async (planPostData) => {
     try {
@@ -128,13 +141,27 @@ const MeditationFOrm = ({ meditationId }) => {
                       onBlur={handleBlur}
                       placeholder="Meditation Name"
                     />
-                    <Input
+                    {/* <Input
                       error={touched["Description"] && errors["Description"]}
                       placeholder="Meditation Type"
                       name="Description"
                       value={values["Description"]}
                       onChange={handleChange}
                       onBlur={handleBlur}
+                    /> */}
+                  </div>
+                  <div className={styles.selects}>
+                    <Select
+                      // previewMode={previewMode}
+                      placeholder="Meditation Type"
+                      options={mindCategories}
+                      name="Description"
+                      idParam="Name"
+                      label="Description"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values["Description"]}
+                      error={touched["Description"] && errors["Description"]}
                     />
                   </div>
                 </section>

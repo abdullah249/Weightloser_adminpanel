@@ -9,6 +9,7 @@ const initialState = {
   cbt: [],
   showAddForm: false,
   planId: null,
+  mindCategories: [],
 };
 
 export const fetchMind = createAsyncThunk("mind/fetchMind", async () => {
@@ -23,6 +24,17 @@ export const fetchCBT = createAsyncThunk("mind/fetchCBT", async () => {
     return res.videosData;
   } catch (ex) {}
 });
+export const fetchMindCategories = createAsyncThunk(
+  "mind/fetchMindCategories",
+  async () => {
+    try {
+      const { data: res } = await api.get(
+        API_URLS.mind.meditation.getCategories
+      );
+      return res.mindCatogories;
+    } catch (ex) {}
+  }
+);
 
 export const mindSlice = createSlice({
   name: "mind",
@@ -43,6 +55,11 @@ export const mindSlice = createSlice({
     builder.addCase(fetchCBT.fulfilled, (state, action) => {
       if (action.payload) {
         state.cbt = action.payload;
+      }
+    });
+    builder.addCase(fetchMindCategories.fulfilled, (state, action) => {
+      if (action.payload) {
+        state.mindCategories = action.payload;
       }
     });
   },

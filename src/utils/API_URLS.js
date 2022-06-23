@@ -86,6 +86,7 @@ export const API_URLS = {
       create: "plan/addplan",
       attachVideo: "plan/mindplan",
       getVideos: (planId, day) => `plan/MindPlan?planId=${planId}&day=${day}`,
+      getCategories: "category/mind",
     },
     cbt: {
       create: "video",
