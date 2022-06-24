@@ -1,10 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./Chats.module.scss";
 import Typography from "components/Typography";
 import ChatCard from "./ChatCard";
 
-const Chats = () => {
+const Chats = ({ chatList, setSelectedChat }) => {
   const [active, setActive] = useState(1);
+
+  const handleChat = (index, data) => {
+    setActive(index + 1);
+    setSelectedChat(data);
+  };
 
   return (
     <>
@@ -12,10 +17,12 @@ const Chats = () => {
         Recent
       </Typography>
       <div className={styles.list}>
-        {Array.from({ length: 10 }, (_, i) => i + 1).map((m, index) => (
+        {chatList?.map((m, index) => (
           <ChatCard
-            onClick={() => setActive(index + 1)}
+            onClick={() => handleChat(index, m.data)}
             active={active === index + 1}
+            name={m.data.senderId}
+            msg={m.data.msg}
           />
         ))}
       </div>

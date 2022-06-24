@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import styles from "./MessagesContainer.module.scss";
 import Message from "./Message";
 import Input from "./Input";
@@ -10,7 +11,16 @@ import ContextAlt from "icons/ContextAlt";
 import IconButton from "components/IconButton";
 import Gear from "icons/Gear";
 
-const MessagesContainer = () => {
+const MessagesContainer = ({ chatList, selectedChat }) => {
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    const msgList = chatList?.filter((chat) => {
+      return chat?.data?.senderId == selectedChat?.senderId;
+    });
+    setMessages([...msgList]);
+  }, [chatList, selectedChat]);
+
   return (
     <div>
       <div className={styles.top}>
@@ -31,7 +41,10 @@ const MessagesContainer = () => {
         </div>
       </div>
       <div className={styles.container_messages}>
-        <Message text="Some text in the." user="Henry Smith" />
+        {messages?.map((msg) => (
+          <Message text={msg.data.msg} user={"Ameen"} />
+        ))}
+        {/* <Message text="Some text in the." user="Henry Smith" />
         <Message text="Some text in the chat lorum." user="Henry Smith" />
         <Message
           text="Lorum Ipsum some text in chat  that shows chat  going on"
@@ -39,7 +52,7 @@ const MessagesContainer = () => {
           reversed
         />
         <Message text="Some text in the." user="Henry Smith" />
-        <Message text="Some text in the chat lorum." user="Henry Smith" />
+        <Message text="Some text in the chat lorum." user="Henry Smith" /> */}
       </div>
       <div className={styles.bottom}>
         <Input />{" "}

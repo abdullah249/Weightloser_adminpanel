@@ -40,7 +40,7 @@ const ChatCard = ({ status = "active", active, ...rest }) => {
       <img src={USER_THUMBNAIL} />
       <div>
         <Typography block variant="label_bold" className="mb-xs">
-          Henry Smith
+          {rest.name}
         </Typography>
         <Typography block variant="label">
           Exercise Coach
