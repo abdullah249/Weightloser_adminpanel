@@ -9,9 +9,11 @@ import Chats from "./Chats";
 import classNames from "classnames";
 import MessagesContainer from "./MessagesContainer";
 import { db } from "../../firebase";
+import { onlyNumbers } from "utils/containOnlyNumber";
 
 const Chat = () => {
   const [chatList, setChatList] = useState([]);
+  const [chatListFiltered, setChatListFiltered] = useState([]);
   const [selectedChat, setSelectedChat] = useState();
   const [sendMessage, setSendMessage] = useState("");
 
@@ -23,17 +25,35 @@ const Chat = () => {
           data: doc.data(),
           id: doc.id,
         }));
-        setChatList(chats);
+        setChatList([...chats]);
+        console.log("RESULT", chats);
+        // let output = containOnlyNumbers(chats);
+        let result = getUniqueListBy(chats, "senderId");
+        const index = result.findIndex(
+          (a) => a.data?.senderId === "Diet Coach"
+        );
+        if (index === -1) return;
+        result.splice(index, 1);
+        setChatListFiltered([...result]);
       })
       .catch((e) => console.log("err", e));
   }, []);
 
+  // const containOnlyNumbers = (arr) => {
+  //   let output = arr.map((obj) => {
+  //     let senderId = obj.data?.senderId;
+  //     if (onlyNumbers(senderId)) {
+  //       return (senderId = Number(senderId));
+  //     }
+  //   });
+  //   return output;
+  // };
+
+  const getUniqueListBy = (arr, key) => {
+    return [...new Map(arr.map((item) => [item.data[key], item])).values()];
+  };
+
   const handleSubmit = () => {
-    console.log(
-      "YOYO",
-      sendMessage,
-      JSON.parse(localStorage.getItem("WEIGH_T_CHOP__PER__USER"))
-    );
     let currentUser = JSON.parse(
       localStorage.getItem("WEIGH_T_CHOP__PER__USER")
     );
@@ -41,11 +61,13 @@ const Chat = () => {
     addDoc(chatRef, {
       msg: sendMessage,
       isMedia: false,
-      senderId: currentUser.Id,
+      senderId: "Diet Coach",
       recieverId: selectedChat?.senderId,
-    }).then((res) => {
-      console.log("ADD RES", res).catch((e) => console.log("err", e));
-    });
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((e) => console.log("err", e));
   };
 
   const handleSendMessage = ({ target: { value } }) => {
@@ -62,7 +84,10 @@ const Chat = () => {
           <Status />
           <Search />
           <Tabs />
-          <Chats chatList={chatList} setSelectedChat={setSelectedChat} />
+          <Chats
+            chatList={chatListFiltered}
+            setSelectedChat={setSelectedChat}
+          />
         </div>
         <div className={styles.right}>
           <MessagesContainer

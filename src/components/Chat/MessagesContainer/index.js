@@ -47,21 +47,17 @@ const MessagesContainer = ({
         </div>
       </div>
       <div className={styles.container_messages}>
-        {messages?.map((msg) => (
-          <Message text={msg.data.msg} user={msg.data.senderId} />
-        ))}
-        {/* <Message text="Some text in the." user="Henry Smith" />
-        <Message text="Some text in the chat lorum." user="Henry Smith" />
-        <Message
-          text="Lorum Ipsum some text in chat  that shows chat  going on"
-          user="Steven Franklin"
-          reversed
-        />
-         */}
+        {messages?.map((msg) => {
+          return msg.data.senderId === "Diet Coach" ? (
+            <Message text={msg.data.msg} user={msg.data.senderId} reversed />
+          ) : (
+            <Message text={msg.data.msg} user={msg.data.senderId} />
+          );
+        })}
       </div>
       <div className={styles.bottom}>
         <Input value={sendMessage} handleInput={handleSendMessage} />{" "}
-        <Button type="submit" handleSubmit={handleSubmit}>
+        <Button type="submit" onClick={handleSubmit}>
           Send <Send />{" "}
         </Button>
       </div>
