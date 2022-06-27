@@ -57,8 +57,7 @@ const MessagesContainer = ({
           user="Steven Franklin"
           reversed
         />
-        <Message text="Some text in the." user="Henry Smith" />
-        <Message text="Some text in the chat lorum." user="Henry Smith" /> */}
+         */}
       </div>
       <div className={styles.bottom}>
         <Input value={sendMessage} handleInput={handleSendMessage} />{" "}
