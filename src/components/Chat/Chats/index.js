@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styles from "./Chats.module.scss";
 import Typography from "components/Typography";
 import ChatCard from "./ChatCard";

@@ -11,7 +11,13 @@ import ContextAlt from "icons/ContextAlt";
 import IconButton from "components/IconButton";
 import Gear from "icons/Gear";
 
-const MessagesContainer = ({ chatList, selectedChat }) => {
+const MessagesContainer = ({
+  chatList,
+  selectedChat,
+  handleSubmit,
+  sendMessage,
+  handleSendMessage,
+}) => {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
@@ -42,7 +48,7 @@ const MessagesContainer = ({ chatList, selectedChat }) => {
       </div>
       <div className={styles.container_messages}>
         {messages?.map((msg) => (
-          <Message text={msg.data.msg} user={"Ameen"} />
+          <Message text={msg.data.msg} user={msg.data.senderId} />
         ))}
         {/* <Message text="Some text in the." user="Henry Smith" />
         <Message text="Some text in the chat lorum." user="Henry Smith" />
@@ -55,8 +61,8 @@ const MessagesContainer = ({ chatList, selectedChat }) => {
         <Message text="Some text in the chat lorum." user="Henry Smith" /> */}
       </div>
       <div className={styles.bottom}>
-        <Input />{" "}
-        <Button>
+        <Input value={sendMessage} handleInput={handleSendMessage} />{" "}
+        <Button type="submit" handleSubmit={handleSubmit}>
           Send <Send />{" "}
         </Button>
       </div>

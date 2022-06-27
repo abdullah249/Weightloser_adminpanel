@@ -13,6 +13,7 @@ import { db } from "../../firebase";
 const Chat = () => {
   const [chatList, setChatList] = useState([]);
   const [selectedChat, setSelectedChat] = useState();
+  const [sendMessage, setSendMessage] = useState("");
 
   useEffect(() => {
     const chatRef = collection(db, "Chats");
@@ -25,22 +26,31 @@ const Chat = () => {
         setChatList(chats);
       })
       .catch((e) => console.log("err", e));
-
-    // let dummy = {
-    //   msg: "Ameen Testimg",
-    //   isMedia: false,
-    //   senderId: 1,
-    //   recieverId: 3,
-    // };
-    // addDoc(chatRef, {
-    //   msg: dummy.msg,
-    //   isMedia: dummy.isMedia,
-    //   senderId: dummy.senderId,
-    //   recieverId: dummy.recieverId,
-    // }).then((res) => {
-    //   console.log("ADD RES", res).catch((e) => console.log("err", e));
-    // });
   }, []);
+
+  const handleSubmit = () => {
+    console.log(
+      "YOYO",
+      sendMessage,
+      JSON.parse(localStorage.getItem("WEIGH_T_CHOP__PER__USER"))
+    );
+    let currentUser = JSON.parse(
+      localStorage.getItem("WEIGH_T_CHOP__PER__USER")
+    );
+    const chatRef = collection(db, "Chats");
+    addDoc(chatRef, {
+      msg: sendMessage,
+      isMedia: false,
+      senderId: currentUser.Id,
+      recieverId: selectedChat?.senderId,
+    }).then((res) => {
+      console.log("ADD RES", res).catch((e) => console.log("err", e));
+    });
+  };
+
+  const handleSendMessage = ({ target: { value } }) => {
+    setSendMessage(value);
+  };
 
   return (
     <>
@@ -55,7 +65,13 @@ const Chat = () => {
           <Chats chatList={chatList} setSelectedChat={setSelectedChat} />
         </div>
         <div className={styles.right}>
-          <MessagesContainer chatList={chatList} selectedChat={selectedChat} />
+          <MessagesContainer
+            chatList={chatList}
+            selectedChat={selectedChat}
+            sendMessage={sendMessage}
+            handleSubmit={handleSubmit}
+            handleSendMessage={handleSendMessage}
+          />
         </div>
       </div>
     </>
