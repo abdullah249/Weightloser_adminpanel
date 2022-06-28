@@ -47,7 +47,7 @@ export const nutritions = [
     title: "Fiber (g)",
   },
   {
-    name: "TotalCarbs",
+    name: "Carbs",
     title: "Total Carbs (g)",
   },
   {
@@ -67,7 +67,7 @@ export const nutritions = [
     title: "Sodium",
   },
   {
-    name: "NetCarbs",
+    name: "SR",
     title: "Net Carbs (g)",
   },
 ];
@@ -101,10 +101,10 @@ const SelectFood = ({
     Sugar: Yup.number().required("Required").typeError("Invalid number"),
     Fiber: Yup.number().required("Required").typeError("Invalid number"),
     Sodium: Yup.number().required("Required").typeError("Invalid number"),
-    NetCarbs: Yup.number().required("Required").typeError("Invalid number"),
+    SR: Yup.number().required("Required").typeError("Invalid number"),
     SatFat: Yup.number().required("Required").typeError("Invalid number"),
     Protein: Yup.number().required("Required").typeError("Invalid number"),
-    TotalCarbs: Yup.number().required("Required").typeError("Invalid number"),
+    Carbs: Yup.number().required("Required").typeError("Invalid number"),
     Calories: Yup.number().required("Required").typeError("Invalid number"),
     fat: Yup.number().required("Required").typeError("Invalid number"),
     AllergicFood: isAllergy
@@ -113,8 +113,6 @@ const SelectFood = ({
           .of(Yup.string().required())
           .required()
       : Yup.array(),
-    // TC: Yup.number().required("Required").typeError("Invalid number"),
-    // SR: Yup.number().required("Required").typeError("Invalid number"),
     Cuisine: Yup.string().required("Required"),
     Category: Yup.string().required("Required"),
     // ImageFile: Yup.mixed().required("Required"),
@@ -155,10 +153,10 @@ const SelectFood = ({
     Sugar: "",
     Fiber: "",
     Sodium: "",
-    NetCarbs: "",
+    SR: "",
     SatFat: "",
     Protein: "",
-    TotalCarbs: "",
+    Carbs: "",
     Calories: "",
     fat: "",
     Items: [],
@@ -452,6 +450,7 @@ const SelectFood = ({
             return { ...m, items: m.items.filter((f) => f) };
           });
           values.ingredients = values.ingredients.filter((f) => f);
+          console.log("ALL VALUES", values);
           let hasError = false;
           if (!values.Procedure) {
             hasError = true;
@@ -484,7 +483,6 @@ const SelectFood = ({
             });
           }
           values.DetailsDesc = JSON.stringify([...values.ingredients]);
-          values.Description = values.Description;
           values.IsAllergic = isAllergy;
           // values.AllergicFood = JSON.stringify(allergyFood);
           values.Grocery = JSON.stringify(values.Grocery);
@@ -673,7 +671,7 @@ const SelectFood = ({
                     <div className={styles.quantities}>
                       <QuantityLabel
                         title="Carbs"
-                        quantity={values?.TotalCarbs}
+                        quantity={values?.Carbs}
                         left={0}
                       />
                       <QuantityLabel
@@ -692,7 +690,7 @@ const SelectFood = ({
                           Number(values?.Sodium) +
                           Number(values?.Fiber) +
                           Number(values?.SatFat) +
-                          Number(values?.NetCarbs)
+                          Number(values?.SR)
                         }
                         left={0}
                       />

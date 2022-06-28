@@ -37,6 +37,7 @@ const FoodCard = ({
   };
 
   useEffect(() => {
+    console.log("FOOOD", food);
     fetchLogging();
   }, []);
 
