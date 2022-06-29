@@ -25,6 +25,7 @@ import GroceryItem from "./GroceryItem";
 import Select from "components/Select";
 import ImageUploader from "./ImageUploader";
 import { CARD_PLACEHOLDER_IMAGE } from "api/RequestInterceptor";
+import * as XLSX from "xlsx";
 
 const TABS = {
   ALL: "all",
@@ -92,6 +93,7 @@ const SelectFood = ({
   const [isAllergy, setIsAllergy] = useState(false);
   const [phase, setPhase] = useState(1);
   const [allergyFood, setAllergyFood] = useState([]);
+  const [readExcel, setReadExcel] = useState();
   const allDiets = useSelector((state) => state.diets.data);
   const diet = allDiets.find((f) => f.Id == planId);
 
@@ -202,6 +204,21 @@ const SelectFood = ({
   });
 
   const DAYS = ["M", "T", "W", "TH", "FR", "SA", "SU"];
+
+  const handleExcelFile = (e) => {
+    let selectedFile = e.target.files[0];
+    let reader = new FileReader();
+    reader.readAsArrayBuffer(selectedFile);
+    reader.onload = async function (e) {
+      if (e.target?.result) {
+        const workbook = XLSX.read(e.target?.result, { type: "buffer" });
+        const worksheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[worksheetName];
+        const data = XLSX.utils.sheet_to_json(worksheet);
+        console.log("JSON-DATA", data);
+      }
+    };
+  };
 
   const shouldVisible = (tab) => {
     if (currentTab === tab && tab === TABS.PROCEDURE) {
@@ -901,6 +918,11 @@ const SelectFood = ({
                   </div>
 
                   {/* Phases */}
+                  <div>
+                    <span>{`Upload Excel (For testing)`}</span>
+                    <input type={"file"} onChange={handleExcelFile} />
+                  </div>
+                  <br />
                   <div className={styles.allergy}>
                     <div className={styles.allergyCheck}>
                       <Typography variant="body_bold">Phases</Typography>
