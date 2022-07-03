@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Input from "components/Input";
 import styles from "./DietForm.module.scss";
 import ImageUploader from "components/molecules/ImageUploader";
@@ -44,6 +44,7 @@ export const TIMES = [
 ];
 
 const DietForm = ({ viewOnly }) => {
+  const excelRef = useRef();
   const dispatch = useDispatch();
   const [currentPlanId, setCurrentPlanId] = useState(
     useSelector((state) => state.diets.planId)
@@ -186,6 +187,8 @@ const DietForm = ({ viewOnly }) => {
   };
 
   const saveFood = async (values) => {
+    values.PlanId = currentPlanId;
+    values.Name = new Date().getTime();
     try {
       const formData = new FormData();
       for (let key in values) {
@@ -230,41 +233,40 @@ const DietForm = ({ viewOnly }) => {
   };
 
   const handleExcel = (e) => {
-    console.log("CHOOZA");
+    let types = [
+      ".csv",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "application/vnd.ms-excel",
+    ];
     let selectedFile = e.target.files[0];
-    let reader = new FileReader();
-    reader.readAsArrayBuffer(selectedFile);
-    reader.onload = async function (e) {
-      if (e.target?.result) {
-        const workbook = XLSX.read(e.target?.result, { type: "buffer" });
-        const worksheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[worksheetName];
-        const data = XLSX.utils.sheet_to_json(worksheet);
-        if (data) {
-          // data.map(async row => {
-          // console.log("JSON-DATA", row, currentPlanId);
-          // const savedFoodId = saveFood(row);
-          // if (savedFoodId) {
-          //   console.log("FOOD ID", savedFoodId);
-          //   saveFoodPlan(savedFoodId, row);
-          // }
-          await Promise.all(
-            data.map(async (row) => {
-              try {
-                const savedFoodId = await saveFood(row);
-                if (savedFoodId) {
-                  console.log("FOOD ID", savedFoodId);
-                  await saveFoodPlan(savedFoodId, row);
+    if (types.includes(selectedFile.type)) {
+      let reader = new FileReader();
+      reader.readAsArrayBuffer(selectedFile);
+      reader.onload = async function (e) {
+        if (e.target?.result) {
+          const workbook = XLSX.read(e.target?.result, { type: "buffer" });
+          const worksheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[worksheetName];
+          const data = XLSX.utils.sheet_to_json(worksheet);
+          if (data) {
+            await Promise.all(
+              data.slice(0, 4).map(async (row) => {
+                try {
+                  console.log("JSON-DATA", row, currentPlanId);
+                  const savedFoodId = await saveFood(row);
+                  if (savedFoodId) {
+                    console.log("FOOD ID", savedFoodId);
+                    await saveFoodPlan(savedFoodId, row);
+                  }
+                } catch (err) {
+                  console.log(err);
                 }
-              } catch (err) {
-                console.log(err);
-              }
-            })
-          );
-          // });
+              })
+            );
+          }
         }
-      }
-    };
+      };
+    } else toast.error("Please upload only excel file!");
   };
 
   return (
@@ -385,6 +387,25 @@ const DietForm = ({ viewOnly }) => {
                     placeholder="Cuisine"
                   />
                 </div> */}
+                <div style={{ marginLeft: "auto" }}>
+                  <input
+                    ref={excelRef}
+                    accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                    type="file"
+                    id="files"
+                    name="files[]"
+                    onChange={handleExcel}
+                    hidden
+                  />
+                  <Button
+                    type="button"
+                    onClick={() => excelRef.current.click()}
+                  >
+                    <Typography variant="body_bold">
+                      Upload Excel File
+                    </Typography>
+                  </Button>{" "}
+                </div>
               </section>
               {editMode && (
                 <section>
@@ -435,10 +456,6 @@ const DietForm = ({ viewOnly }) => {
                     selectedDay={selectedDay}
                   />
                 ))}
-            </div>
-            <div>
-              <span>{`Upload Excel (For testing)`}</span>
-              <input type={"file"} onChange={handleExcel} />
             </div>
           </>
         )}
