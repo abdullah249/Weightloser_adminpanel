@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import TextArea from "components/TextArea";
 import Select from "components/Select";
 import * as _ from "lodash";
+import * as XLSX from "xlsx";
 
 const validationSchema = Yup.object().shape({
   Title: Yup.string().required("Required"),
@@ -182,6 +183,88 @@ const DietForm = ({ viewOnly }) => {
           : CARD_PLACEHOLDER_IMAGE;
       }
     } catch (ex) {}
+  };
+
+  const saveFood = async (values) => {
+    try {
+      const formData = new FormData();
+      for (let key in values) {
+        formData.append(key, values[key]);
+      }
+      const { data: res } = await apiFormData.post(API_URLS.food.new, formData);
+      if (res) {
+        if (res.response == "Food already exists") {
+          toast.error(res.response);
+          return null;
+        } else {
+          toast("Saving food plan");
+          return res.foodId;
+        }
+      } else {
+        toast.error("Some error occurred. Try again!");
+      }
+    } catch (ex) {
+      throw ex;
+    }
+  };
+
+  const saveFoodPlan = async (savedFoodId, values) => {
+    try {
+      const { data: res } = await api.post(API_URLS.diet.addFoodPlan, {
+        FoodId: savedFoodId,
+        PlanId: currentPlanId,
+        Day: String(values.Day),
+        MealType: values.MealType,
+        ServingSize: values.ServingSize,
+        Phase: values.Phase,
+      });
+      if (res) {
+        toast.success("Food plan saved");
+        // onFoodAdd();
+      } else {
+        toast.error("An error occurred in saving the food details");
+      }
+    } catch (ex) {
+      throw ex;
+    }
+  };
+
+  const handleExcel = (e) => {
+    console.log("CHOOZA");
+    let selectedFile = e.target.files[0];
+    let reader = new FileReader();
+    reader.readAsArrayBuffer(selectedFile);
+    reader.onload = async function (e) {
+      if (e.target?.result) {
+        const workbook = XLSX.read(e.target?.result, { type: "buffer" });
+        const worksheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[worksheetName];
+        const data = XLSX.utils.sheet_to_json(worksheet);
+        if (data) {
+          // data.map(async row => {
+          // console.log("JSON-DATA", row, currentPlanId);
+          // const savedFoodId = saveFood(row);
+          // if (savedFoodId) {
+          //   console.log("FOOD ID", savedFoodId);
+          //   saveFoodPlan(savedFoodId, row);
+          // }
+          await Promise.all(
+            data.map(async (row) => {
+              try {
+                const savedFoodId = await saveFood(row);
+                if (savedFoodId) {
+                  console.log("FOOD ID", savedFoodId);
+                  await saveFoodPlan(savedFoodId, row);
+                }
+              } catch (err) {
+                console.log(err);
+              }
+            })
+          );
+          // });
+        }
+      }
+    };
   };
 
   return (
@@ -352,6 +435,10 @@ const DietForm = ({ viewOnly }) => {
                     selectedDay={selectedDay}
                   />
                 ))}
+            </div>
+            <div>
+              <span>{`Upload Excel (For testing)`}</span>
+              <input type={"file"} onChange={handleExcel} />
             </div>
           </>
         )}
