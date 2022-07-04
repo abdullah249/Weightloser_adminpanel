@@ -5,6 +5,7 @@ export const API_URLS = {
     create: "plan/addplan",
     updata: "plan/update",
     addFoodPlan: "plan/foodplan",
+    getFoodId: "food/Foodid",
     getFoods: ({ planId, day }) => `plan/FoodPlan?planId=${planId}&day=${day}`,
     deleteFood: "plan/FoodDelete",
     dashboard: "plan/dashboard",

@@ -46,9 +46,11 @@ export const TIMES = [
 const DietForm = ({ viewOnly }) => {
   const excelRef = useRef();
   const dispatch = useDispatch();
+  const getfoodId = useSelector((state) => state.diets?.foodId);
   const [currentPlanId, setCurrentPlanId] = useState(
     useSelector((state) => state.diets.planId)
   );
+  const [currentFoodId, setCurrentFoodId] = useState(getfoodId);
   const [selectedDay, setSelectedDay] = useState(1);
   const [cuisines, setCuisines] = useState([]);
   const [categotries, setCategories] = useState([]);
@@ -66,6 +68,10 @@ const DietForm = ({ viewOnly }) => {
   const [count, setCount] = useState(0);
 
   useEffect(() => {}, [count]);
+
+  useEffect(() => {
+    setCurrentFoodId(getfoodId);
+  }, [getfoodId]);
 
   useEffect(() => {
     getPlan(currentPlanId);
@@ -130,7 +136,9 @@ const DietForm = ({ viewOnly }) => {
         planFormData
       );
       if (data) {
-        setCurrentPlanId(data);
+        console.log("DATAA PLAN", data);
+        setCurrentPlanId(data.planId);
+        setCurrentFoodId(data.foodId);
         // dispatch(fetchDiets());
         // dispatch(
         //   setShowAddForm({
@@ -186,9 +194,10 @@ const DietForm = ({ viewOnly }) => {
     } catch (ex) {}
   };
 
-  const saveFood = async (values) => {
+  const saveFood = async (values, foodId) => {
     values.PlanId = currentPlanId;
     values.Name = new Date().getTime();
+    values.FoodId = foodId.toString();
     try {
       const formData = new FormData();
       for (let key in values) {
@@ -205,27 +214,6 @@ const DietForm = ({ viewOnly }) => {
         }
       } else {
         toast.error("Some error occurred. Try again!");
-      }
-    } catch (ex) {
-      throw ex;
-    }
-  };
-
-  const saveFoodPlan = async (savedFoodId, values) => {
-    try {
-      const { data: res } = await api.post(API_URLS.diet.addFoodPlan, {
-        FoodId: savedFoodId,
-        PlanId: currentPlanId,
-        Day: String(values.Day),
-        MealType: values.MealType,
-        ServingSize: values.ServingSize,
-        Phase: values.Phase,
-      });
-      if (res) {
-        toast.success("Food plan saved");
-        // onFoodAdd();
-      } else {
-        toast.error("An error occurred in saving the food details");
       }
     } catch (ex) {
       throw ex;
@@ -249,15 +237,12 @@ const DietForm = ({ viewOnly }) => {
           const worksheet = workbook.Sheets[worksheetName];
           const data = XLSX.utils.sheet_to_json(worksheet);
           if (data) {
+            let foodId = currentFoodId;
             await Promise.all(
-              data.slice(0, 4).map(async (row) => {
+              data.slice(0, 5).map(async (row) => {
                 try {
-                  console.log("JSON-DATA", row, currentPlanId);
-                  const savedFoodId = await saveFood(row);
-                  if (savedFoodId) {
-                    console.log("FOOD ID", savedFoodId);
-                    await saveFoodPlan(savedFoodId, row);
-                  }
+                  foodId = foodId + 1;
+                  await saveFood(row, foodId);
                 } catch (err) {
                   console.log(err);
                 }
@@ -387,25 +372,27 @@ const DietForm = ({ viewOnly }) => {
                     placeholder="Cuisine"
                   />
                 </div> */}
-                <div style={{ marginLeft: "auto" }}>
-                  <input
-                    ref={excelRef}
-                    accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                    type="file"
-                    id="files"
-                    name="files[]"
-                    onChange={handleExcel}
-                    hidden
-                  />
-                  <Button
-                    type="button"
-                    onClick={() => excelRef.current.click()}
-                  >
-                    <Typography variant="body_bold">
-                      Upload Excel File
-                    </Typography>
-                  </Button>{" "}
-                </div>
+                {currentPlanId && (
+                  <div style={{ marginLeft: "auto" }}>
+                    <input
+                      ref={excelRef}
+                      accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                      type="file"
+                      id="files"
+                      name="files[]"
+                      onChange={handleExcel}
+                      hidden
+                    />
+                    <Button
+                      type="button"
+                      onClick={() => excelRef.current.click()}
+                    >
+                      <Typography variant="body_bold">
+                        Upload Excel File
+                      </Typography>
+                    </Button>{" "}
+                  </div>
+                )}
               </section>
               {editMode && (
                 <section>

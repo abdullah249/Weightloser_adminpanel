@@ -23,23 +23,23 @@ const FoodCard = ({
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [logged, setLogged] = useState(false);
 
-  const fetchLogging = async () => {
-    try {
-      const { data } = await api.get(
-        API_URLS.diet.getLogging(269, food.PlanId)
-      );
-      if (data && data.response === "Logged") {
-        setLogged(true);
-      } else {
-        setLogged(false);
-      }
-    } catch (ex) {}
-  };
+  // const fetchLogging = async () => {
+  //   try {
+  //     const { data } = await api.get(
+  //       API_URLS.diet.getLogging(269, food.PlanId)
+  //     );
+  //     if (data && data.response === "Logged") {
+  //       setLogged(true);
+  //     } else {
+  //       setLogged(false);
+  //     }
+  //   } catch (ex) {}
+  // };
 
-  useEffect(() => {
-    console.log("FOOOD", food);
-    fetchLogging();
-  }, []);
+  // useEffect(() => {
+  //   console.log("FOOOD", food);
+  //   fetchLogging();
+  // }, []);
 
   const deleteFood = async () => {
     confirmAlert({

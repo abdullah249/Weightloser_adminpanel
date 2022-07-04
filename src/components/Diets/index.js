@@ -5,7 +5,11 @@ import styles from "./Diets.module.scss";
 import { SearchInput } from "components/Header";
 import { useDispatch, useSelector } from "react-redux";
 import { debounce } from "lodash";
-import { setShowAddForm, fetchDiets } from "redux/reducers/diets.reducer";
+import {
+  setShowAddForm,
+  fetchDiets,
+  fetchFoodId,
+} from "redux/reducers/diets.reducer";
 import api from "api/RequestInterceptor";
 import { API_URLS } from "utils/API_URLS";
 import { Link } from "react-router-dom";
@@ -25,6 +29,7 @@ const Diets = () => {
 
   useEffect(() => {
     dispatch(fetchDiets());
+    dispatch(fetchFoodId());
     fetchDashboard();
   }, []);
 

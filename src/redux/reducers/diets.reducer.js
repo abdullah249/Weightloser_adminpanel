@@ -8,12 +8,20 @@ const initialState = {
   plans: [],
   showAddForm: false,
   planId: null,
+  foodId: null,
 };
 
 export const fetchDiets = createAsyncThunk("blogs/fetchDiets", async () => {
   try {
     const { data: res } = await api.get(API_URLS.diet.list);
     return res.plans;
+  } catch (ex) {}
+});
+
+export const fetchFoodId = createAsyncThunk("blogs/fetchFoodId", async () => {
+  try {
+    const { data: res } = await api.get(API_URLS.diet.getFoodId);
+    return res.foodId;
   } catch (ex) {}
 });
 
@@ -31,6 +39,11 @@ export const dietsSlice = createSlice({
     builder.addCase(fetchDiets.fulfilled, (state, action) => {
       if (action.payload) {
         state.data = action.payload;
+      }
+    });
+    builder.addCase(fetchFoodId.fulfilled, (state, action) => {
+      if (action.payload) {
+        state.foodId = action.payload;
       }
     });
   },
