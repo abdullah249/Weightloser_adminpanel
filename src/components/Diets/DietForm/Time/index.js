@@ -28,6 +28,7 @@ const Time = ({
   const [isOpen, setIsOpen] = useState(false);
   const [foods, setFoods] = useState([]);
   const [selectedFoodId, setSelectedFoodId] = useState(null);
+  const [phase, setPhase] = useState(1);
 
   const handleOpen = () => {
     if (!selectedDay) {
@@ -91,7 +92,8 @@ const Time = ({
     }
   }, [selectedDay]);
 
-  const handleEditFood = (foodId) => {
+  const handleEditFood = (foodId, foodPhase) => {
+    setPhase(foodPhase);
     setSelectedFoodId(foodId);
     setIsOpen(true);
     setCount();
@@ -130,7 +132,7 @@ const Time = ({
                 viewOnly={viewOnly}
                 key={m.FoodId}
                 data={m}
-                onEditFood={() => handleEditFood(m.FoodId)}
+                onEditFood={() => handleEditFood(m.FoodId, m.Phase)}
                 onDeleteFood={handleDeleteFood}
               />
             ))}
@@ -146,6 +148,7 @@ const Time = ({
       <Modal isOpen={isOpen} size="lg" onClose={() => setIsOpen(false)}>
         <SelectFood
           foodId={selectedFoodId}
+          selectedPhase={phase}
           label={label}
           planId={planId}
           selectedDay={selectedDay}

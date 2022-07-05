@@ -195,7 +195,6 @@ const DietForm = ({ viewOnly }) => {
 
   const saveFood = async (values, foodId) => {
     values.PlanId = currentPlanId;
-    values.Name = new Date().getTime();
     values.FoodId = foodId.toString();
     try {
       const formData = new FormData();

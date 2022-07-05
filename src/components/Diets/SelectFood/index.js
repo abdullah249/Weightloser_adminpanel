@@ -1,20 +1,19 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Label from "components/Label";
 import Typography from "components/Typography";
 import Input from "components/Input";
 import styles from "./SelectFood.module.scss";
 import Food from "./Food";
-import Calories from "./Calories";
 import QuantityLabel from "./QuantityLabel";
 import classNames from "classnames";
 import Button from "components/Button";
-import api, { apiFormData, getImage } from "api/RequestInterceptor";
+import api, { apiFormData } from "api/RequestInterceptor";
 import { API_URLS } from "utils/API_URLS";
 import { Formik } from "formik";
 import toast from "react-hot-toast";
 // import FoodSearch from "./FoodSearch";
 import * as Yup from "yup";
-import { get, find, update } from "lodash";
+import { get, find } from "lodash";
 import { useSelector } from "react-redux";
 import { TIMES as PLAN_TYPES } from "../DietForm";
 import FoodForm from "../FoodForm";
@@ -77,6 +76,7 @@ const SelectFood = ({
   planId,
   foodId,
   selectedDay,
+  selectedPhase,
   onFoodAdd = () => {},
   onClose = () => {},
 }) => {
@@ -92,7 +92,6 @@ const SelectFood = ({
   const [isAllergy, setIsAllergy] = useState(false);
   const [phase, setPhase] = useState(1);
   const [allergyFood, setAllergyFood] = useState([]);
-  const [readExcel, setReadExcel] = useState();
   const allDiets = useSelector((state) => state.diets.data);
   const diet = allDiets.find((f) => f.Id == planId);
 
@@ -160,6 +159,7 @@ const SelectFood = ({
     Carbs: "",
     Calories: "",
     fat: "",
+    Phase: 1,
     Items: [],
     AllergicFood: [],
     Grocery: [
@@ -213,6 +213,10 @@ const SelectFood = ({
     }
     return "d-none";
   };
+
+  useEffect(() => {
+    setPhase(selectedPhase);
+  }, [selectedPhase]);
 
   useEffect(() => {
     const selectedPlan = find(plans, { planId });
@@ -295,6 +299,7 @@ const SelectFood = ({
       } catch (err) {
         foodData.Grocery = [...initialValues.Grocery];
       }
+
       foodData.Items = JSON.parse(foodData.Items);
       foodData.Day = [];
       try {
@@ -445,7 +450,8 @@ const SelectFood = ({
             return false;
           }
           let values = { ...originalValues };
-          values.AllergicFood = JSON.stringify([...values.AllergicFood]);
+          // values.AllergicFood = JSON.stringify([...values.AllergicFood]);
+          values.AllergicFood = JSON.stringify(allergyFood);
           values.Grocery = values.Grocery.map((m) => {
             return { ...m, items: m.items.filter((f) => f) };
           });
@@ -484,7 +490,6 @@ const SelectFood = ({
           }
           values.DetailsDesc = JSON.stringify([...values.ingredients]);
           values.IsAllergic = isAllergy;
-          // values.AllergicFood = JSON.stringify(allergyFood);
           values.Grocery = JSON.stringify(values.Grocery);
           values.GroceryList = new Blob([JSON.stringify({ grocery: [] })], {
             type: "application/json",
@@ -860,7 +865,8 @@ const SelectFood = ({
                       <div
                         className={styles.allergyFood}
                         style={{
-                          border: errors["AllergicFood"] && "1px solid #dc3545",
+                          border:
+                            allergyFood.length === 0 && "1px solid #dc3545",
                         }}
                       >
                         {dummies?.map((x) => {
@@ -868,14 +874,18 @@ const SelectFood = ({
                             <div
                               onClick={(e) => {
                                 if (e.target.checked) {
-                                  let data = [...values["AllergicFood"], x];
-                                  setFieldValue("AllergicFood", data);
+                                  console.log("HAN", allergyFood);
+                                  let data = [...allergyFood, x];
+                                  console.log("HAN DATA", data);
+                                  setAllergyFood([...data]);
                                 } else {
-                                  let data = [...values["AllergicFood"]];
+                                  let data = [...allergyFood];
                                   let index = data.indexOf(x);
+                                  console.log("NAA", index, x, data);
                                   if (index !== -1) {
                                     data.splice(index, 1);
-                                    setFieldValue("AllergicFood", data);
+                                    console.log("NAA DELETE", data);
+                                    setAllergyFood([...data]);
                                   }
                                 }
                               }}
@@ -885,7 +895,7 @@ const SelectFood = ({
                                 type="checkbox"
                                 value=""
                                 id={"flexCheckChecked" + x}
-                                checked={values.AllergicFood.includes(x)}
+                                checked={allergyFood.includes(x)}
                               />
                               <label
                                 for="flexCheckChecked"
