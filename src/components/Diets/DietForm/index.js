@@ -136,7 +136,6 @@ const DietForm = ({ viewOnly }) => {
         planFormData
       );
       if (data) {
-        console.log("DATAA PLAN", data);
         setCurrentPlanId(data.planId);
         setCurrentFoodId(data.foodId);
         // dispatch(fetchDiets());
@@ -239,7 +238,7 @@ const DietForm = ({ viewOnly }) => {
           if (data) {
             let foodId = currentFoodId;
             await Promise.all(
-              data.slice(0, 5).map(async (row) => {
+              data.map(async (row) => {
                 try {
                   foodId = foodId + 1;
                   await saveFood(row, foodId);
