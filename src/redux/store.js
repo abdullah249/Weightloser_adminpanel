@@ -7,6 +7,7 @@ import mindReducer from "./reducers/mind.reducer";
 import restaurantsReducer from "./reducers/restaurants.reducer";
 import scheduleReducer from "./reducers/schedule.reducer";
 import userReducer from "./reducers/user.reducer";
+import firebaseReducer from "./reducers/firebase.reducer";
 
 export const store = configureStore({
   reducer: {
@@ -18,5 +19,6 @@ export const store = configureStore({
     restaurants: restaurantsReducer,
     schedule: scheduleReducer,
     user: userReducer,
+    fireB: firebaseReducer,
   },
 });

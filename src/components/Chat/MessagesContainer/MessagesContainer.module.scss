@@ -1,38 +1,39 @@
 @import "scss/variables";
 
 .top {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    background-color: $color_white;
-    padding: 1.875em 1.25em;
-    border-bottom: 0.0625em solid $color_bg_gray;
-    gap: 0.7em;
-    justify-content: space-between;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  background-color: $color_white;
+  padding: 1.875em 1.25em;
+  border-bottom: 0.0625em solid $color_bg_gray;
+  gap: 0.7em;
+  justify-content: space-between;
 
-    > div:last-child {
-        display: inline-flex;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 0.8em;
-    }
+  > div:last-child {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.8em;
+  }
 }
 
 .container_messages {
-    background-color: $color_white;
-    border-bottom: 0.0625em solid $color_bg_gray;
-    padding: 1.875em;
-    @media (max-width: 570px) {
-        padding: 1em;
-    }
-    @media (min-width: 780px) {
-        height: 31.9em;
-    }
+  overflow-y: scroll;
+  background-color: $color_white;
+  border-bottom: 0.0625em solid $color_bg_gray;
+  padding: 1.875em;
+  @media (max-width: 570px) {
+    padding: 1em;
+  }
+  @media (min-width: 780px) {
+    height: 31.9em;
+  }
 }
 
 .bottom {
-    display: flex;
-    gap: 1em;
-    padding: 1em;
-    background-color: $color_white;
+  display: flex;
+  gap: 1em;
+  padding: 1em;
+  background-color: $color_white;
 }

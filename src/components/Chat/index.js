@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { collection, getDocs, addDoc } from "firebase/firestore";
+import React, { useState, useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { collection, addDoc } from "firebase/firestore";
 import Typography from "components/Typography";
 import styles from "./Chat.module.scss";
 import Status from "./Status";
@@ -10,33 +11,29 @@ import classNames from "classnames";
 import MessagesContainer from "./MessagesContainer";
 import { db } from "../../firebase";
 import { onlyNumbers } from "utils/containOnlyNumber";
+import { fetchMsgs } from "redux/reducers/firebase.reducer";
 
-const Chat = () => {
-  const [chatList, setChatList] = useState([]);
-  const [chatListFiltered, setChatListFiltered] = useState([]);
+const Chat = (props) => {
+  const chatRef = collection(db, "Chats");
+  const dispatch = useDispatch();
+  const getMsgs = useSelector((state) => state.fireB.allMsgs);
+  const filterMsgs = useSelector((state) => state.fireB.filteredList);
   const [selectedChat, setSelectedChat] = useState();
   const [sendMessage, setSendMessage] = useState("");
 
+  let prevMsgsRef = useRef();
   useEffect(() => {
-    const chatRef = collection(db, "Chats");
-    getDocs(chatRef)
-      .then((res) => {
-        const chats = res.docs.map((doc) => ({
-          data: doc.data(),
-          id: doc.id,
-        }));
-        setChatList([...chats]);
-        console.log("RESULT", chats);
-        // let output = containOnlyNumbers(chats);
-        let result = getUniqueListBy(chats, "senderId");
-        const index = result.findIndex(
-          (a) => a.data?.senderId === "Diet Coach"
-        );
-        if (index === -1) return;
-        result.splice(index, 1);
-        setChatListFiltered([...result]);
-      })
-      .catch((e) => console.log("err", e));
+    if (getMsgs) {
+      console.log("chatsss", getMsgs);
+      prevMsgsRef.current = getMsgs;
+    }
+  }, [getMsgs]);
+
+  useEffect(() => {
+    // if (prevMsgsRef.current == getMsgs)
+    //   console.log("LOG", prevMsgsRef.current, getMsgs);
+    // return () => {}
+    dispatch(fetchMsgs());
   }, []);
 
   // const containOnlyNumbers = (arr) => {
@@ -49,14 +46,7 @@ const Chat = () => {
   //   return output;
   // };
 
-  const getUniqueListBy = (arr, key) => {
-    return [...new Map(arr.map((item) => [item.data[key], item])).values()];
-  };
-
   const handleSubmit = () => {
-    let currentUser = JSON.parse(
-      localStorage.getItem("WEIGH_T_CHOP__PER__USER")
-    );
     const chatRef = collection(db, "Chats");
     addDoc(chatRef, {
       msg: sendMessage,
@@ -84,14 +74,11 @@ const Chat = () => {
           <Status />
           <Search />
           <Tabs />
-          <Chats
-            chatList={chatListFiltered}
-            setSelectedChat={setSelectedChat}
-          />
+          <Chats chatList={filterMsgs} setSelectedChat={setSelectedChat} />
         </div>
         <div className={styles.right}>
           <MessagesContainer
-            chatList={chatList}
+            chatList={getMsgs}
             selectedChat={selectedChat}
             sendMessage={sendMessage}
             handleSubmit={handleSubmit}
