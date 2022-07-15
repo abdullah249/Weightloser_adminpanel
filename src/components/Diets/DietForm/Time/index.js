@@ -45,6 +45,7 @@ const Time = ({
   };
 
   const getFoods = async () => {
+    console.log("CALLING ME");
     try {
       if (!planId || !selectedDay) {
         return false;
@@ -77,10 +78,6 @@ const Time = ({
     getFoods();
     setCount();
   };
-
-  useEffect(() => {
-    console.log("Foodsss", foods);
-  }, [foods]);
 
   useEffect(() => {
     const selectedPlan = find(plans, { planId });
@@ -130,7 +127,16 @@ const Time = ({
                 No Meals
               </Typography>
             )}
-            {foods?.map((m) => console.log("YES HAVE"))}
+            {foods?.map((m) => (
+              <FoodCard
+                withLogging={withLogging}
+                viewOnly={viewOnly}
+                key={m.FoodId}
+                data={m}
+                onEditFood={() => handleEditFood(m.FoodId, m.Phase)}
+                onDeleteFood={handleDeleteFood}
+              />
+            ))}
             {!viewOnly && (
               <IconButton size="lg" onClick={handleOpen}>
                 <Plus />

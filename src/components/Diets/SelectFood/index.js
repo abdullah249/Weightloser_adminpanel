@@ -440,6 +440,7 @@ const SelectFood = ({
         try {
           setLoading(true);
           if (!selectedDay) {
+            console.log("selected ISSUE", selectedDay);
             toast("Please select a day", {
               style: {
                 borderRadius: "10px",
