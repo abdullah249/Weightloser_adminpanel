@@ -143,7 +143,7 @@ const SelectFood = ({
   const [initialValues, setInitialValues] = useState({
     Name: "",
     ImageFile: null,
-    Day: [],
+    Day: null,
     ServingSize: selectedFood?.ServingSize,
     DetailsDesc: "",
     Description: "",
@@ -411,7 +411,7 @@ const SelectFood = ({
       const { data: res } = await api.post(API_URLS.diet.addFoodPlan, {
         FoodId: savedFoodId,
         PlanId: planId,
-        Day: String(selectedDay),
+        Day: selectedDay,
         MealType: activeMealType,
         ServingSize: ServingSize,
         Phase: phase,
@@ -451,12 +451,13 @@ const SelectFood = ({
           }
           let values = { ...originalValues };
           // values.AllergicFood = JSON.stringify([...values.AllergicFood]);
+          values.Day = selectedDay;
+          values.MealType = activeMealType;
           values.AllergicFood = JSON.stringify(allergyFood);
           values.Grocery = values.Grocery.map((m) => {
             return { ...m, items: m.items.filter((f) => f) };
           });
           values.ingredients = values.ingredients.filter((f) => f);
-          console.log("ALL VALUES", values);
           let hasError = false;
           if (!values.Procedure) {
             hasError = true;
@@ -534,6 +535,7 @@ const SelectFood = ({
           //   toast.error("Something went wrong. Try again");
           // }
         } catch (ex) {
+          console.log("onSubmit Error");
           toast.error(ex.message);
           console.error(ex.message);
         } finally {

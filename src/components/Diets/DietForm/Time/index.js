@@ -79,6 +79,10 @@ const Time = ({
   };
 
   useEffect(() => {
+    console.log("Foodsss", foods);
+  }, [foods]);
+
+  useEffect(() => {
     const selectedPlan = find(plans, { planId });
     if (selectedPlan) {
       const food = get(selectedPlan.foods, `${selectedDay}.${label}`);
@@ -126,16 +130,7 @@ const Time = ({
                 No Meals
               </Typography>
             )}
-            {foods.map((m) => (
-              <FoodCard
-                withLogging={withLogging}
-                viewOnly={viewOnly}
-                key={m.FoodId}
-                data={m}
-                onEditFood={() => handleEditFood(m.FoodId, m.Phase)}
-                onDeleteFood={handleDeleteFood}
-              />
-            ))}
+            {foods?.map((m) => console.log("YES HAVE"))}
             {!viewOnly && (
               <IconButton size="lg" onClick={handleOpen}>
                 <Plus />
