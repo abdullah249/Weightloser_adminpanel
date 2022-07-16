@@ -108,10 +108,7 @@ const SelectFood = ({
     Calories: Yup.number().required("Required").typeError("Invalid number"),
     fat: Yup.number().required("Required").typeError("Invalid number"),
     AllergicFood: isAllergy
-      ? Yup.array()
-          .min(1, "Select atleast one allergy food")
-          .of(Yup.string().required())
-          .required()
+      ? Yup.array().min(1, "Select atleast one allergy food")
       : Yup.array(),
     Cuisine: Yup.string().required("Required"),
     Category: Yup.string().required("Required"),
@@ -440,7 +437,6 @@ const SelectFood = ({
         try {
           setLoading(true);
           if (!selectedDay) {
-            console.log("selected ISSUE", selectedDay);
             toast("Please select a day", {
               style: {
                 borderRadius: "10px",
@@ -877,18 +873,16 @@ const SelectFood = ({
                             <div
                               onClick={(e) => {
                                 if (e.target.checked) {
-                                  console.log("HAN", allergyFood);
                                   let data = [...allergyFood, x];
-                                  console.log("HAN DATA", data);
                                   setAllergyFood([...data]);
+                                  setFieldValue(`AllergicFood`, [...data]);
                                 } else {
                                   let data = [...allergyFood];
                                   let index = data.indexOf(x);
-                                  console.log("NAA", index, x, data);
                                   if (index !== -1) {
                                     data.splice(index, 1);
-                                    console.log("NAA DELETE", data);
                                     setAllergyFood([...data]);
+                                    setFieldValue(`AllergicFood`, [...data]);
                                   }
                                 }
                               }}
