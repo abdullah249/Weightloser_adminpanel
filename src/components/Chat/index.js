@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import Typography from "components/Typography";
 import styles from "./Chat.module.scss";
 import Status from "./Status";
@@ -14,27 +14,20 @@ import { onlyNumbers } from "utils/containOnlyNumber";
 import { fetchMsgs } from "redux/reducers/firebase.reducer";
 
 const Chat = (props) => {
-  const chatRef = collection(db, "Chats");
+  let prevMsgsRef = useRef();
   const dispatch = useDispatch();
   const getMsgs = useSelector((state) => state.fireB.allMsgs);
   const filterMsgs = useSelector((state) => state.fireB.filteredList);
   const [selectedChat, setSelectedChat] = useState();
   const [sendMessage, setSendMessage] = useState("");
 
-  let prevMsgsRef = useRef();
   useEffect(() => {
-    if (getMsgs) {
-      console.log("chatsss", getMsgs);
-      prevMsgsRef.current = getMsgs;
-    }
-  }, [getMsgs]);
-
-  useEffect(() => {
-    // if (prevMsgsRef.current == getMsgs)
-    //   console.log("LOG", prevMsgsRef.current, getMsgs);
-    // return () => {}
     dispatch(fetchMsgs());
   }, []);
+
+  useEffect(() => {
+    dispatch(fetchMsgs());
+  }, [selectedChat]);
 
   // const containOnlyNumbers = (arr) => {
   //   let output = arr.map((obj) => {
@@ -47,15 +40,17 @@ const Chat = (props) => {
   // };
 
   const handleSubmit = () => {
+    setSendMessage("");
     const chatRef = collection(db, "Chats");
     addDoc(chatRef, {
       msg: sendMessage,
       isMedia: false,
       senderId: "Diet Coach",
       recieverId: selectedChat?.senderId,
+      createdAt: serverTimestamp(),
     })
       .then((res) => {
-        console.log(res);
+        dispatch(fetchMsgs());
       })
       .catch((e) => console.log("err", e));
   };

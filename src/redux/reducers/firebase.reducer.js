@@ -19,6 +19,7 @@ export const fetchMsgs = createAsyncThunk("firebase/getMsgs", async () => {
           data: doc.data(),
           id: doc.id,
         }));
+        console.log("chatsss", chats);
       })
       .catch((e) => console.log("err", e));
     return chats;

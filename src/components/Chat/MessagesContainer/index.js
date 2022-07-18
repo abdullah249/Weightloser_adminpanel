@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
 import styles from "./MessagesContainer.module.scss";
 import Message from "./Message";
 import Input from "./Input";
@@ -18,11 +18,22 @@ const MessagesContainer = ({
   sendMessage,
   handleSendMessage,
 }) => {
+  const containerRef = useRef(null);
   const [messages, setMessages] = useState([]);
+
+  useLayoutEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+    }
+  });
 
   useEffect(() => {
     const msgList = chatList?.filter((chat) => {
-      return chat?.data?.senderId == selectedChat?.senderId;
+      return (
+        chat?.data?.senderId == selectedChat?.senderId ||
+        (chat?.data?.senderId === "Diet Coach" &&
+          chat?.data?.recieverId == selectedChat?.senderId)
+      );
     });
     setMessages([...msgList]);
   }, [chatList, selectedChat]);
@@ -46,7 +57,7 @@ const MessagesContainer = ({
           </IconButton>
         </div>
       </div>
-      <div className={styles.container_messages}>
+      <div className={styles.container_messages} ref={containerRef}>
         {messages?.map((msg) => {
           return msg.data.senderId === "Diet Coach" ? (
             <Message text={msg.data.msg} user={msg.data.senderId} reversed />
