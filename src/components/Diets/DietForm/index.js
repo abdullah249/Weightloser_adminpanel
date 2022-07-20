@@ -263,7 +263,7 @@ const DietForm = ({ viewOnly }) => {
               ...values,
               ImageFile: values.ImageFile,
               Details: "",
-              UserId: 1,
+              UserId: 0,
               PlanTypeId: 1,
             };
             if (!currentPlanId) {
