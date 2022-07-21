@@ -44,6 +44,17 @@ export const TIMES = [
 ];
 
 const DietForm = ({ viewOnly }) => {
+  const groceryList = [
+    "Breads and Cereals",
+    "Grains",
+    "Dairy",
+    "Meat and Poultry",
+    "Soy Products",
+    "Nuts and Seeds",
+    "Fruits and Vegetables",
+    "Fats and Oil",
+    "Baking",
+  ];
   const excelRef = useRef();
   const dispatch = useDispatch();
   const getfoodId = useSelector((state) => state.diets?.foodId);
@@ -199,7 +210,14 @@ const DietForm = ({ viewOnly }) => {
     try {
       const formData = new FormData();
       for (let key in values) {
-        formData.append(key, values[key]);
+        if (key === "Grocery" || key === "AllergicFood")
+          console.log("KEY", key);
+        formData.append(
+          key,
+          key === "Grocery" || key === "AllergicFood"
+            ? JSON.stringify(values[key])
+            : values[key]
+        );
       }
       const { data: res } = await apiFormData.post(API_URLS.food.new, formData);
       if (res) {
@@ -234,6 +252,22 @@ const DietForm = ({ viewOnly }) => {
           const worksheetName = workbook.SheetNames[0];
           const worksheet = workbook.Sheets[worksheetName];
           const data = XLSX.utils.sheet_to_json(worksheet);
+          if (data) {
+            data.map((row, i) => {
+              Object.entries(row)?.forEach(([key, value]) => {
+                if (groceryList.includes(key)) {
+                  if (value) {
+                    if (!Array.isArray(row.Grocery)) row.Grocery = [];
+                    row.Grocery.push({ title: key, items: value.split(",") });
+                    delete row[key];
+                  }
+                }
+                if (key === "AllergicFood" && value) {
+                  row[key] = value.split(",");
+                }
+              });
+            });
+          }
           if (data) {
             let foodId = currentFoodId;
             await Promise.all(
