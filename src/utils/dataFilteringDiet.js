@@ -1,40 +1,56 @@
-export const phaseBasedCalories1_3_4 = (data) => {
-  data.forEach((el, i) => {
-    if (
-      (el.Day >= 1 && el.Day <= 7) ||
-      (el.Day >= 22 && el.Day <= 42) ||
-      (el.Day >= 43 && el.Day <= 70)
-    ) {
-      if (
-        el.MealType.toLowerCase() === "breakfast" &&
-        el.Calories >= 200 &&
-        el.Calories <= 400
-      )
-        console.log("Data is Fine For Phase1-3-4 Breakfast");
-      else if (
-        el.MealType.toLowerCase() === "lunch" &&
-        el.Calories >= 400 &&
-        el.Calories <= 600
-      )
-        console.log("Data is Fine For Phase1-3-4 Lunch");
-      else if (
-        el.MealType.toLowerCase() === "snacks" &&
-        el.Calories >= 150 &&
-        el.Calories <= 300
-      )
-        console.log("Data is Fine For Phase1-3-4 Snacks");
-      else if (
-        el.MealType.toLowerCase() === "dinner" &&
-        el.Calories >= 400 &&
-        el.Calories <= 800
-      )
-        console.log("Data is Fine For Phase1-3-4 Dinner");
-      else console.log("Wrong Meal Type", i, el.Day, el.MealType, el.Calories);
-    }
-  });
+const errorHandlingPhase = (el, i) => {
+  console.log("Error in Calories", i, el.MealType, el.Calories, el.Day);
+  return false;
 };
 
-export const phaseBasedCalories2 = () => {};
+export const phaseBasedCalories1_3_4 = (data) => {
+  let result = data?.every((el, i) => {
+    return (Number(el.Calories) >= 1 && Number(el.Calories) <= 7) ||
+      (Number(el.Calories) >= 22 && Number(el.Calories) <= 42) ||
+      (Number(el.Day) >= 43 && Number(el.Calories) <= 70)
+      ? el.MealType.toLowerCase() === "breakfast" &&
+        Number(el.Calories) >= 200 &&
+        Number(el.Calories) <= 400
+        ? true
+        : el.MealType.toLowerCase() === "lunch" &&
+          Number(el.Calories) >= 400 &&
+          Number(el.Calories) <= 600
+        ? true
+        : el.MealType.toLowerCase() === "snacks" &&
+          Number(el.Calories) >= 150 &&
+          Number(el.Calories) <= 300
+        ? true
+        : el.MealType.toLowerCase() === "dinner" &&
+          Number(el.Calories) >= 400 &&
+          Number(el.Calories) <= 800
+        ? true
+        : console.log("YOYO1")
+      : Number(el.Calories) >= 8 && Number(el.Calories) <= 21
+      ? el.MealType.toLowerCase() === "breakfast" &&
+        Number(el.Calories) >= 200 &&
+        Number(el.Calories) <= 400
+        ? true
+        : el.MealType.toLowerCase() === "lunch" &&
+          Number(el.Calories) >= 400 &&
+          Number(el.Calories) <= 600
+        ? true
+        : el.MealType.toLowerCase() === "snacks" &&
+          Number(el.Calories) >= 150 &&
+          Number(el.Calories) <= 300
+        ? true
+        : el.MealType.toLowerCase() === "dinner" &&
+          //  Number(el.Carbs) === 0 &&
+          Number(el.Calories) >= 400 &&
+          Number(el.Calories) <= 800
+        ? true
+        : console.log("YOYO2")
+      : false;
+  });
+
+  console.log("resultDoo", result);
+};
+
+export const phaseBasedCalories2 = (data) => {};
 
 export const checkAllNutrition = () => {};
 

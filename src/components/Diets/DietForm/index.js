@@ -258,10 +258,10 @@ const DietForm = ({ viewOnly }) => {
             let result = formattingData(data);
             if (result) {
               console.log("formatting Result", result);
-              let phases1_3_4 = phaseBasedCalories1_3_4(result);
-              if (phases1_3_4) {
-                console.log("phases1_3_4", phases1_3_4);
-              }
+              phaseBasedCalories1_3_4(result);
+              // if (phases1_3_4) {
+              //   console.log("phases1_3_4", phases1_3_4);
+              // } else console.log("phases1_3_4 error", phases1_3_4);
             } else toast.error("Something wrong with Formatting!");
           }
           // if (data) {
