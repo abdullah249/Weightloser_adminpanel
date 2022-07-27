@@ -45,7 +45,6 @@ const Time = ({
   };
 
   const getFoods = async () => {
-    console.log("CALLING ME");
     try {
       if (!planId || !selectedDay) {
         return false;

@@ -20,6 +20,8 @@ import TextArea from "components/TextArea";
 import Select from "components/Select";
 import * as _ from "lodash";
 import * as XLSX from "xlsx";
+import { formattingData } from "utils/formattingData";
+import { phaseBasedCalories1_3_4 } from "utils/dataFilteringDiet";
 
 const validationSchema = Yup.object().shape({
   Title: Yup.string().required("Required"),
@@ -253,34 +255,28 @@ const DietForm = ({ viewOnly }) => {
           const worksheet = workbook.Sheets[worksheetName];
           const data = XLSX.utils.sheet_to_json(worksheet);
           if (data) {
-            data.map((row, i) => {
-              Object.entries(row)?.forEach(([key, value]) => {
-                if (groceryList.includes(key)) {
-                  if (value) {
-                    if (!Array.isArray(row.Grocery)) row.Grocery = [];
-                    row.Grocery.push({ title: key, items: value.split(",") });
-                    delete row[key];
-                  }
-                }
-                if (key === "AllergicFood" && value) {
-                  row[key] = value.split(",");
-                }
-              });
-            });
+            let result = formattingData(data);
+            if (result) {
+              console.log("formatting Result", result);
+              let phases1_3_4 = phaseBasedCalories1_3_4(result);
+              if (phases1_3_4) {
+                console.log("phases1_3_4", phases1_3_4);
+              }
+            } else toast.error("Something wrong with Formatting!");
           }
-          if (data) {
-            let foodId = currentFoodId;
-            await Promise.all(
-              data.map(async (row) => {
-                try {
-                  foodId = foodId + 1;
-                  await saveFood(row, foodId);
-                } catch (err) {
-                  console.log(err);
-                }
-              })
-            );
-          }
+          // if (data) {
+          //   let foodId = currentFoodId;
+          //   await Promise.all(
+          //     data.map(async (row) => {
+          //       try {
+          //         foodId = foodId + 1;
+          //         await saveFood(row, foodId);
+          //       } catch (err) {
+          //         console.log(err);
+          //       }
+          //     })
+          //   );
+          // }
         }
       };
     } else toast.error("Please upload only excel file!");
