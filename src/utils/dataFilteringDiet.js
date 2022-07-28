@@ -84,10 +84,6 @@ export const phaseBasedCalories1_3_4 = (data) => {
         ? true
         : errorHandlingPhase(el, i, arr)
       : el.Day >= 8 && el.Day <= 21 && el.Procedure && i < arr.length - 1
-      ? arr[i].Name !== arr[i + 1].Name
-        ? true
-        : errorHandlingPhase(el, i, arr)
-      : true
       ? el.MealType.toLowerCase() === "breakfast" &&
         el.Calories >= 200 &&
         el.Calories <= 400
