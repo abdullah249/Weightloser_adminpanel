@@ -39,19 +39,39 @@ export const phaseBasedCalories1_3_4 = (data) => {
       (el.Day >= 43 && el.Day <= 70 && el.Procedure)
       ? el.MealType.toLowerCase() === "breakfast" &&
         el.Calories >= 200 &&
-        el.Calories <= 400
+        el.Calories <= 400 &&
+        el.Protein &&
+        el.Carbs &&
+        el.SatFat &&
+        el.fat &&
+        el.SR
         ? true
         : el.MealType.toLowerCase() === "lunch" &&
           el.Calories >= 400 &&
-          el.Calories <= 600
+          el.Calories <= 600 &&
+          el.Protein &&
+          el.Carbs &&
+          el.SatFat &&
+          el.fat &&
+          el.SR
         ? true
         : el.MealType.toLowerCase() === "snacks" &&
           el.Calories >= 150 &&
-          el.Calories <= 300
+          el.Calories <= 300 &&
+          el.Protein &&
+          el.Carbs &&
+          el.SatFat &&
+          el.fat &&
+          el.SR
         ? true
         : el.MealType.toLowerCase() === "dinner" &&
           el.Calories >= 400 &&
-          el.Calories <= 800
+          el.Calories <= 800 &&
+          el.Protein &&
+          el.Carbs &&
+          el.SatFat &&
+          el.fat &&
+          el.SR
         ? true
         : errorHandlingPhase(el, i, arr)
       : el.Day >= 8 &&
@@ -60,20 +80,39 @@ export const phaseBasedCalories1_3_4 = (data) => {
         arr[i].Name !== arr[i + 1].Name
       ? el.MealType.toLowerCase() === "breakfast" &&
         el.Calories >= 200 &&
-        el.Calories <= 400
+        el.Calories <= 400 &&
+        el.Protein &&
+        el.Carbs &&
+        el.SatFat &&
+        el.fat &&
+        el.SR
         ? true
         : el.MealType.toLowerCase() === "lunch" &&
           el.Calories >= 400 &&
-          el.Calories <= 600
+          el.Calories <= 600 &&
+          el.Protein &&
+          el.Carbs &&
+          el.SatFat &&
+          el.fat &&
+          el.SR
         ? true
         : el.MealType.toLowerCase() === "snacks" &&
           el.Calories >= 150 &&
-          el.Calories <= 300
+          el.Calories <= 300 &&
+          el.Protein &&
+          el.Carbs &&
+          el.SatFat &&
+          el.fat &&
+          el.SR
         ? true
         : el.MealType.toLowerCase() === "dinner" &&
           el.Carbs === 0 &&
           el.Calories >= 400 &&
-          el.Calories <= 800
+          el.Calories <= 800 &&
+          el.Protein &&
+          el.SatFat &&
+          el.fat &&
+          el.SR
         ? true
         : errorHandlingPhase(el, i, arr)
       : errorHandlingPhase(el, i, arr);
