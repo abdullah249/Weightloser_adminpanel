@@ -118,8 +118,8 @@ export const phaseBasedCalories1_3_4 = (data) => {
       : errorHandlingPhase(el, i, arr);
   });
   let result = countErrors > 0 ? false : true;
-  console.log("Errors", countErrors);
-  console.log("Success", result);
+  console.log("Errors:", countErrors);
+  console.log("Success:", result);
   checkSweetDishes(data);
   return result;
 };
