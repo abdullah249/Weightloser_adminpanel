@@ -1,5 +1,6 @@
 import { sweetDishesList } from "constants/sweetDishes";
-var countErrors = 0;
+var caloriesErrors = 0;
+var sweetDishErrors = 0;
 const errorHandlingPhase = (el, i, arr) => {
   console.log(
     "Error:",
@@ -28,8 +29,22 @@ const errorHandlingPhase = (el, i, arr) => {
     "Food Unique=",
     arr[i].Name !== arr[i + 1].Name
   );
-  countErrors++;
+  caloriesErrors++;
   return true;
+};
+
+const errorHandlingSweetDishes = (el) => {
+  console.log(
+    "Sweet Dish Error:",
+    "FoodName=",
+    el.Name,
+    "Day=",
+    el.Day,
+    "MealType=",
+    el.MealType
+  );
+  sweetDishErrors++;
+  return false;
 };
 
 export const phaseBasedCalories1_3_4 = (data) => {
@@ -117,30 +132,25 @@ export const phaseBasedCalories1_3_4 = (data) => {
         : errorHandlingPhase(el, i, arr)
       : errorHandlingPhase(el, i, arr);
   });
-  let result = countErrors > 0 ? false : true;
-  console.log("Errors:", countErrors);
-  console.log("Success:", result);
-  checkSweetDishes(data);
-  return result;
+  let caloriesSuccess = caloriesErrors > 0 ? false : true;
+  console.log("Calories Errors:", caloriesErrors);
+  console.log("Calories Success:", caloriesSuccess);
+  caloriesErrors = 0;
+  return caloriesSuccess;
 };
 
 export const checkSweetDishes = (data) => {
   let lowerCaseList = sweetDishesList.map((d) => d.toLowerCase());
-  if (lowerCaseList) {
-    data.forEach((el, i) => {
-      if (lowerCaseList.includes(el.Name.toLowerCase())) {
-        console.log(
-          "Sweet Dish Error:",
-          "FoodName=",
-          el.Name,
-          "Day=",
-          el.Day,
-          "MealType=",
-          el.MealType
-        );
-      }
-    });
-  }
+  data.map((el) => {
+    return lowerCaseList.includes(el.Name.toLowerCase())
+      ? errorHandlingSweetDishes(el)
+      : true;
+  });
+  let sweetDishSuccess = sweetDishErrors > 0 ? false : true;
+  console.log("Sweet Erros", sweetDishErrors);
+  console.log("Sweet Success ", sweetDishSuccess);
+  sweetDishErrors = 0;
+  return sweetDishSuccess;
 };
 
 export const checkAllNutrition = () => {};

@@ -21,7 +21,10 @@ import Select from "components/Select";
 import * as _ from "lodash";
 import * as XLSX from "xlsx";
 import { formattingData } from "utils/formattingData";
-import { phaseBasedCalories1_3_4 } from "utils/dataFilteringDiet";
+import {
+  phaseBasedCalories1_3_4,
+  checkSweetDishes,
+} from "utils/dataFilteringDiet";
 
 const validationSchema = Yup.object().shape({
   Title: Yup.string().required("Required"),
@@ -258,10 +261,11 @@ const DietForm = ({ viewOnly }) => {
             let result = formattingData(data);
             if (result) {
               console.log("formatting Result", result);
-              phaseBasedCalories1_3_4(result);
-              // if (phases1_3_4) {
-              //   console.log("phases1_3_4", phases1_3_4);
-              // } else console.log("phases1_3_4 error", phases1_3_4);
+              console.log(
+                "Phase | Sweet",
+                phaseBasedCalories1_3_4(result),
+                checkSweetDishes(result)
+              );
             } else toast.error("Something wrong with Formatting!");
           }
           // if (data) {
