@@ -10,6 +10,7 @@ const groceryList = [
   "Baking",
 ];
 
+let simpleArray = ["AllergicFood", "DetailsDesc"];
 export const formattingData = (data) => {
   data.map((row) => {
     return Object.entries(row)?.forEach(([key, value]) => {
@@ -20,7 +21,7 @@ export const formattingData = (data) => {
           delete row[key];
         }
       }
-      if (key === "AllergicFood" && value) {
+      if (simpleArray.includes(key) && value) {
         row[key] = value.split(",");
       }
     });

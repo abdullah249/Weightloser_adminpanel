@@ -24,6 +24,7 @@ import { formattingData } from "utils/formattingData";
 import {
   phaseBasedCalories1_3_4,
   checkSweetDishes,
+  checkCreamAndButter,
 } from "utils/dataFilteringDiet";
 
 const validationSchema = Yup.object().shape({
@@ -262,9 +263,10 @@ const DietForm = ({ viewOnly }) => {
             if (result) {
               console.log("formatting Result", result);
               console.log(
-                "Phase | Sweet",
+                "Phase | Sweet | ButterCream",
                 phaseBasedCalories1_3_4(result),
-                checkSweetDishes(result)
+                checkSweetDishes(result),
+                checkCreamAndButter(result)
               );
             } else toast.error("Something wrong with Formatting!");
           }
