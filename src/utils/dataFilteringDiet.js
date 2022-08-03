@@ -220,7 +220,7 @@ export const balancedDietPhase1 = (data) => {
       return p === el.Day ? perDayNutritionValues(el) : "";
     });
     if (
-      netCarbs < 25 &&
+      netCarbs <= 25 &&
       protein > 100 &&
       fat < 100 &&
       calories >= 1700 &&
@@ -257,11 +257,11 @@ export const balancedDietPhase2 = (data) => {
       return p === el.Day ? perDayNutritionValues(el) : "";
     });
     if (
-      netCarbs < 50 &&
+      netCarbs <= 50 &&
       protein > 100 &&
       fat < 80 &&
       calories >= 1700 &&
-      calories > 1500
+      calories <= 1500
     )
       console.log("");
     else balancedDietPhaseErrors++;
@@ -290,7 +290,7 @@ export const balancedDietPhase3 = (data) => {
       protein >= protein * 0.35 &&
       fat >= fat * 0.2 &&
       fat >= fat * 0.25 &&
-      calories >= 1800
+      calories <= 1800
     )
       console.log("");
     else balancedDietPhaseErrors++;
@@ -319,7 +319,7 @@ export const balancedDietPhase4 = (data) => {
       protein >= protein * 0.35 &&
       fat >= fat * 0.2 &&
       fat >= fat * 0.25 &&
-      calories >= 2000
+      calories <= 2000
     )
       console.log("");
     else balancedDietPhaseErrors++;
