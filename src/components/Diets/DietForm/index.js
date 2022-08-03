@@ -26,6 +26,9 @@ import {
   checkSweetDishes,
   checkCreamAndButter,
   balancedDietPhase1,
+  balancedDietPhase2,
+  balancedDietPhase3,
+  balancedDietPhase4,
 } from "utils/dataFilteringDiet";
 
 const validationSchema = Yup.object().shape({
@@ -264,11 +267,14 @@ const DietForm = ({ viewOnly }) => {
             if (result) {
               console.log("formatting Result", result);
               console.log(
-                "Phase | Sweet | ButterCream | BalanceDiet1",
+                "PhaseMeal | Sweet | ButterCream | BalanceDiet1 | BalanceDiet2 | BalanceDiet3 | BalanceDiet4",
                 phaseBasedCalories1_3_4(result),
                 checkSweetDishes(result),
                 checkCreamAndButter(result),
-                balancedDietPhase1(result)
+                balancedDietPhase1(result),
+                balancedDietPhase2(result),
+                balancedDietPhase3(result),
+                balancedDietPhase4(result)
               );
             } else toast.error("Something wrong with Formatting!");
           }

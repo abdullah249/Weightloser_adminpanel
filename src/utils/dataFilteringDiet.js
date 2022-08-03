@@ -12,10 +12,12 @@ var carbs = 0;
 var protein = 0;
 var fat = 0;
 var calories = 0;
+var phase1MondayCalories = 0;
+var phase2ThursdayCalories = 0;
 
 const errorHandlingPhase = (el, i, arr) => {
   console.log(
-    "Error:",
+    "Phase Meal Error:",
     "Day=",
     el.Day,
     "MealType=",
@@ -205,19 +207,25 @@ export const checkCreamAndButter = (data) => {
   return butterCreamSuccess;
 };
 
-const perDayNutritionValues = (el) => {
+const perDayNutritionValues = (el, p) => {
   netCarbs += el.SR;
   protein += el.Protein;
   fat += el.fat;
   calories += el.Calories;
   carbs += el.Carbs;
+  if (p >= 1 && p <= 7 && el.DayName.toLowerCase() === "monday") {
+    phase1MondayCalories += el.Calories;
+  }
+  if (p >= 8 && p <= 14 && el.DayName.toLowerCase() === "thursday") {
+    phase2ThursdayCalories += el.Calories;
+  }
 };
 
 export const balancedDietPhase1 = (data) => {
   var balancedDietPhaseErrors = 0;
   for (let p = 1; p <= 1; p++) {
     data.map((el) => {
-      return p === el.Day ? perDayNutritionValues(el) : "";
+      return p === el.Day ? perDayNutritionValues(el, p) : "";
     });
     if (
       netCarbs <= 25 &&
@@ -229,6 +237,7 @@ export const balancedDietPhase1 = (data) => {
       console.log("");
     else balancedDietPhaseErrors++;
     console.log(
+      "Phase 1:",
       "Net-Carbs",
       netCarbs,
       "Protein",
@@ -236,7 +245,10 @@ export const balancedDietPhase1 = (data) => {
       "Fat",
       fat,
       "Calories",
-      calories
+      calories,
+      "Phase1Monday",
+      phase1MondayCalories,
+      phase2ThursdayCalories
     );
     netCarbs = 0;
     protein = 0;
@@ -254,7 +266,7 @@ export const balancedDietPhase2 = (data) => {
   var balancedDietPhaseErrors = 0;
   for (let p = 8; p <= 21; p++) {
     data.map((el) => {
-      return p === el.Day ? perDayNutritionValues(el) : "";
+      return p === el.Day ? perDayNutritionValues(el, p) : "";
     });
     if (
       netCarbs <= 50 &&
@@ -265,6 +277,19 @@ export const balancedDietPhase2 = (data) => {
     )
       console.log("");
     else balancedDietPhaseErrors++;
+    console.log(
+      "Phase 2:",
+      "Net-Carbs",
+      netCarbs,
+      "Protein",
+      protein,
+      "Fat",
+      fat,
+      "Calories",
+      calories,
+      "Phase2Thursday",
+      phase2ThursdayCalories
+    );
     netCarbs = 0;
     protein = 0;
     fat = 0;
@@ -281,7 +306,7 @@ export const balancedDietPhase3 = (data) => {
   var balancedDietPhaseErrors = 0;
   for (let p = 22; p <= 42; p++) {
     data.map((el) => {
-      return p === el.Day ? perDayNutritionValues(el) : "";
+      return p === el.Day ? perDayNutritionValues(el, p) : "";
     });
     if (
       carbs >= carbs * 0.45 &&
@@ -292,7 +317,17 @@ export const balancedDietPhase3 = (data) => {
       fat >= fat * 0.25 &&
       calories <= 1800
     )
-      console.log("");
+      console.log(
+        "Phase 3:",
+        "Net-Carbs",
+        netCarbs,
+        "Protein",
+        protein,
+        "Fat",
+        fat,
+        "Calories",
+        calories
+      );
     else balancedDietPhaseErrors++;
     netCarbs = 0;
     protein = 0;
@@ -310,7 +345,7 @@ export const balancedDietPhase4 = (data) => {
   var balancedDietPhaseErrors = 0;
   for (let p = 22; p <= 42; p++) {
     data.map((el) => {
-      return p === el.Day ? perDayNutritionValues(el) : "";
+      return p === el.Day ? perDayNutritionValues(el, p) : "";
     });
     if (
       carbs >= carbs * 0.45 &&
@@ -321,7 +356,17 @@ export const balancedDietPhase4 = (data) => {
       fat >= fat * 0.25 &&
       calories <= 2000
     )
-      console.log("");
+      console.log(
+        "Phase 4:",
+        "Net-Carbs",
+        netCarbs,
+        "Protein",
+        protein,
+        "Fat",
+        fat,
+        "Calories",
+        calories
+      );
     else balancedDietPhaseErrors++;
     netCarbs = 0;
     protein = 0;
