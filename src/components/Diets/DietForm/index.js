@@ -29,6 +29,7 @@ import {
   balancedDietPhase2,
   balancedDietPhase3,
   balancedDietPhase4,
+  totalErrors,
 } from "utils/dataFilteringDiet";
 
 const validationSchema = Yup.object().shape({
@@ -53,7 +54,7 @@ export const TIMES = [
   { label: "Snacks" },
 ];
 
-const DietForm = ({ viewOnly }) => {
+const DietForm = ({ viewOnly, setShowError, setFilteredData }) => {
   const groceryList = [
     "Breads and Cereals",
     "Grains",
@@ -266,16 +267,31 @@ const DietForm = ({ viewOnly }) => {
             let result = formattingData(data);
             if (result) {
               console.log("formatting Result", result);
-              console.log(
-                "PhaseMeal | Sweet | ButterCream | BalanceDiet1 | BalanceDiet2 | BalanceDiet3 | BalanceDiet4",
-                phaseBasedCalories1_3_4(result),
-                checkSweetDishes(result),
-                checkCreamAndButter(result),
-                balancedDietPhase1(result),
-                balancedDietPhase2(result),
-                balancedDietPhase3(result),
-                balancedDietPhase4(result)
-              );
+              // console.log(
+              //   "PhaseMeal | Sweet | ButterCream | BalanceDiet1 | BalanceDiet2 | BalanceDiet3 | BalanceDiet4",
+              //   phaseBasedCalories1_3_4(result),
+              //   checkSweetDishes(result),
+              //   checkCreamAndButter(result),
+              //   balancedDietPhase1(result),
+              //   balancedDietPhase2(result),
+              //   balancedDietPhase3(result),
+              //   balancedDietPhase4(result)
+              // );
+
+              if (
+                phaseBasedCalories1_3_4(result) &&
+                checkSweetDishes(result) &&
+                checkCreamAndButter(result) &&
+                balancedDietPhase1(result)
+                // balancedDietPhase2(result)
+                // balancedDietPhase3(result) &&
+                // balancedDietPhase4(result)
+              ) {
+                toast.success("Excel data has been verified successfully!");
+              } else {
+                setFilteredData(totalErrors);
+                setShowError(true);
+              }
             } else toast.error("Something wrong with Formatting!");
           }
           // if (data) {

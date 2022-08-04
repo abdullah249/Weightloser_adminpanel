@@ -15,6 +15,8 @@ var calories = 0;
 var phase1MondayCalories = 0;
 var phase2ThursdayCalories = 0;
 var phase1CategoryType = "";
+var indexOfErrors = [];
+var currentRecord;
 
 const errorHandlingPhase = (el, i, arr) => {
   console.log(
@@ -44,11 +46,12 @@ const errorHandlingPhase = (el, i, arr) => {
     "Food Unique=",
     i <= arr.length - 2 ? arr[i].Name !== arr[i + 1].Name : true
   );
+  indexOfErrors.push(el);
   caloriesErrors++;
   return true;
 };
 
-const errorHandlingSweetDishes = (el) => {
+const errorHandlingSweetDishes = (el, i) => {
   console.log(
     "Sweet Dish Error:",
     "FoodName=",
@@ -58,11 +61,12 @@ const errorHandlingSweetDishes = (el) => {
     "MealType=",
     el.MealType
   );
+  indexOfErrors.push(el);
   sweetDishErrors++;
   return false;
 };
 
-const errorHandlingButterCream = (el, el2, ingredientArr) => {
+const errorHandlingButterCream = (el, el2, ingredientArr, i) => {
   console.log(
     "Butter Cream Error:",
     "FoodName=",
@@ -76,6 +80,7 @@ const errorHandlingButterCream = (el, el2, ingredientArr) => {
     "Error on ingredient=",
     el2
   );
+  indexOfErrors.push(el);
   butterCreamErrors++;
   return false;
 };
@@ -180,9 +185,9 @@ export const phaseBasedCalories1_3_4 = (data) => {
 
 export const checkSweetDishes = (data) => {
   let lowerCaseList = sweetDishesList.map((d) => d.toLowerCase());
-  data.map((el) => {
+  data.map((el, i) => {
     return lowerCaseList.includes(el.Name.toLowerCase())
-      ? errorHandlingSweetDishes(el)
+      ? errorHandlingSweetDishes(el, i)
       : true;
   });
   let sweetDishSuccess = sweetDishErrors > 0 ? false : true;
@@ -194,10 +199,10 @@ export const checkSweetDishes = (data) => {
 
 export const checkCreamAndButter = (data) => {
   let lowerCaseList = butterCream.map((d) => d.toLowerCase());
-  data?.map((el) => {
-    return el?.DetailsDesc?.map((el2, i, arr) => {
+  data?.map((el, i) => {
+    return el?.DetailsDesc?.map((el2, arr) => {
       return lowerCaseList.includes(el2.toLowerCase())
-        ? errorHandlingButterCream(el, el2, arr)
+        ? errorHandlingButterCream(el, el2, arr, i)
         : true;
     });
   });
@@ -214,6 +219,7 @@ const perDayNutritionValues = (el, p) => {
   fat += el.fat;
   calories += el.Calories;
   carbs += el.Carbs;
+  currentRecord = Object.assign({}, el);
   if (p >= 1 && p <= 7 && el.DayName.toLowerCase() === "monday") {
     phase1MondayCalories += el.Calories;
     phase1CategoryType = el.Category;
@@ -225,7 +231,7 @@ const perDayNutritionValues = (el, p) => {
 
 export const balancedDietPhase1 = (data) => {
   var balancedDietPhaseErrors = 0;
-  for (let p = 1; p <= 1; p++) {
+  for (let p = 1; p <= 2; p++) {
     data.map((el) => {
       return p === el.Day ? perDayNutritionValues(el, p) : "";
     });
@@ -237,7 +243,7 @@ export const balancedDietPhase1 = (data) => {
       calories >= 1700 &&
       calories <= 1800
     )
-      console.log("Except vegetarian Phase 1 NetCarbs", true);
+      console.log("Except vegetarian Phase 1 NetCarbs", p);
     else if (
       phase1CategoryType.toLowerCase() === "vegetarian" &&
       netCarbs <= 50 &&
@@ -248,7 +254,8 @@ export const balancedDietPhase1 = (data) => {
     ) {
       console.log("Vegetarian Phase 1 NetCarbs", true);
     } else {
-      console.log("Error in Phase 1 NetCarbs", true, phase1CategoryType);
+      console.log("Error in Phase 1 NetCarbs", p, phase1CategoryType);
+      indexOfErrors.push(currentRecord);
       balancedDietPhaseErrors++;
     }
     console.log(
@@ -270,6 +277,7 @@ export const balancedDietPhase1 = (data) => {
     fat = 0;
     calories = 0;
     phase1CategoryType = "";
+    currentRecord = {};
   }
   let balancedDietPhaseSuccess = balancedDietPhaseErrors > 0 ? false : true;
   console.log("Balanced Diet Phase 1 Errors", balancedDietPhaseErrors);
@@ -292,7 +300,10 @@ export const balancedDietPhase2 = (data) => {
       calories <= 1500
     )
       console.log("");
-    else balancedDietPhaseErrors++;
+    else {
+      balancedDietPhaseErrors++;
+      indexOfErrors.push(data[p - 1]);
+    }
     console.log(
       "Phase 2:",
       "Net-Carbs",
@@ -344,7 +355,10 @@ export const balancedDietPhase3 = (data) => {
         "Calories",
         calories
       );
-    else balancedDietPhaseErrors++;
+    else {
+      balancedDietPhaseErrors++;
+      indexOfErrors.push(data[p - 1]);
+    }
     netCarbs = 0;
     protein = 0;
     fat = 0;
@@ -383,7 +397,10 @@ export const balancedDietPhase4 = (data) => {
         "Calories",
         calories
       );
-    else balancedDietPhaseErrors++;
+    else {
+      balancedDietPhaseErrors++;
+      indexOfErrors.push(data[p - 1]);
+    }
     netCarbs = 0;
     protein = 0;
     fat = 0;
@@ -394,4 +411,8 @@ export const balancedDietPhase4 = (data) => {
   console.log("Balanced Diet Phase 4 Success ", balancedDietPhaseSuccess);
   balancedDietPhaseErrors = 0;
   return balancedDietPhaseSuccess;
+};
+
+export const totalErrors = () => {
+  return indexOfErrors;
 };

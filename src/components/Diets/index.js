@@ -5,6 +5,7 @@ import styles from "./Diets.module.scss";
 import { SearchInput } from "components/Header";
 import { useDispatch, useSelector } from "react-redux";
 import { debounce } from "lodash";
+import Table from "components/Table";
 import {
   setShowAddForm,
   fetchDiets,
@@ -13,6 +14,7 @@ import {
 import api from "api/RequestInterceptor";
 import { API_URLS } from "utils/API_URLS";
 import { Link } from "react-router-dom";
+import { excelDietColumns } from "constants/errorTable";
 const Card = React.lazy(() => import("components/Card"));
 const Modal = React.lazy(() => import("components/ModalDefault"));
 const DietForm = React.lazy(() => import("./DietForm"));
@@ -26,12 +28,19 @@ const Diets = () => {
   const [data, setData] = useState([]);
   const isModalOpen = useSelector((state) => state.diets.showAddForm);
   const [dashboard, setDashboard] = useState({});
+  const [showError, setShowError] = useState(false);
+  const [filteredData, setFilteredData] = useState([]);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     dispatch(fetchDiets());
     dispatch(fetchFoodId());
     fetchDashboard();
   }, []);
+
+  useEffect(() => {
+    console.log("Filtered", filteredData, showError, isModalOpen);
+  }, [filteredData, showError, isModalOpen]);
 
   useEffect(() => {
     if (searchRef && searchRef.current) {
@@ -139,8 +148,25 @@ const Diets = () => {
       </Card>
 
       <Modal isOpen={isModalOpen} onClose={onModalClose}>
-        <DietForm />
+        <DietForm
+          setShowError={setShowError}
+          setFilteredData={setFilteredData}
+        />
       </Modal>
+
+      {showError && filteredData && (
+        <>
+          <Typography className="mt-2 mb-2" block>
+            Create New Diet
+          </Typography>
+          <Table
+            fullHeight
+            className={styles.container_table}
+            columns={excelDietColumns}
+            data={filteredData}
+          />
+        </>
+      )}
     </>
   );
 };

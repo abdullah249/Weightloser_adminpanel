@@ -1,5 +1,9 @@
 export const excelDietColumns = [
   {
+    dataKey: "Name",
+    title: "FoodName",
+  },
+  {
     dataKey: "Day",
     title: "Day",
   },
@@ -32,7 +36,7 @@ export const excelDietColumns = [
     title: "Net Carbs",
   },
   {
-    dataKey: "SaturatedFat",
+    dataKey: "SatFat",
     title: "SaturatedFat",
   },
   {
@@ -43,32 +47,4 @@ export const excelDietColumns = [
     dataKey: "Cuisine",
     title: "Cuisine",
   },
-  // {
-  //   title: "Joining Date",
-  //   render: (data) => {
-  //     return <span>{dayjs(data.JoiningDate).format("DD MMM, YYYY")}</span>;
-  //   },
-  // {
-  //   title: "Weight Lost",
-  //   render: (data) => <span>{data.StartWeight - data.CurrentWeight} kg</span>,
-  // },
-  // {
-  //   title: "Action",
-  //   class: "text-center",
-  //   render: (data) => {
-  //     return (
-  //       <div className={classNames(styles.actions)}>
-  //         <IconButton>
-  //           <Message />
-  //         </IconButton>
-  //         {/* <IconButton>
-  //           <PencilAlt />
-  //         </IconButton>
-  //         <IconButton>
-  //           <TrashAlt />
-  //         </IconButton> */}
-  //       </div>
-  //     );
-  //   },
-  // },
 ];
