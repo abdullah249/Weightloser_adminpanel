@@ -291,6 +291,7 @@ const DietForm = ({ viewOnly, setShowError, setFilteredData }) => {
               } else {
                 setFilteredData(totalErrors);
                 setShowError(true);
+                toast.error("Excel data verification has been failed!");
               }
             } else toast.error("Something wrong with Formatting!");
           }
