@@ -14,6 +14,7 @@ var fat = 0;
 var calories = 0;
 var phase1MondayCalories = 0;
 var phase2ThursdayCalories = 0;
+var phase1CategoryType = "";
 
 const errorHandlingPhase = (el, i, arr) => {
   console.log(
@@ -215,6 +216,7 @@ const perDayNutritionValues = (el, p) => {
   carbs += el.Carbs;
   if (p >= 1 && p <= 7 && el.DayName.toLowerCase() === "monday") {
     phase1MondayCalories += el.Calories;
+    phase1CategoryType = el.Category;
   }
   if (p >= 8 && p <= 14 && el.DayName.toLowerCase() === "thursday") {
     phase2ThursdayCalories += el.Calories;
@@ -228,14 +230,27 @@ export const balancedDietPhase1 = (data) => {
       return p === el.Day ? perDayNutritionValues(el, p) : "";
     });
     if (
+      phase1CategoryType.toLowerCase() !== "vegetarian" &&
       netCarbs <= 25 &&
       protein > 100 &&
       fat < 100 &&
       calories >= 1700 &&
       calories <= 1800
     )
-      console.log("");
-    else balancedDietPhaseErrors++;
+      console.log("Except vegetarian Phase 1 NetCarbs", true);
+    else if (
+      phase1CategoryType.toLowerCase() === "vegetarian" &&
+      netCarbs <= 50 &&
+      protein > 100 &&
+      fat < 100 &&
+      calories >= 1700 &&
+      calories <= 1800
+    ) {
+      console.log("Vegetarian Phase 1 NetCarbs", true);
+    } else {
+      console.log("Error in Phase 1 NetCarbs", true, phase1CategoryType);
+      balancedDietPhaseErrors++;
+    }
     console.log(
       "Phase 1:",
       "Net-Carbs",
@@ -254,6 +269,7 @@ export const balancedDietPhase1 = (data) => {
     protein = 0;
     fat = 0;
     calories = 0;
+    phase1CategoryType = "";
   }
   let balancedDietPhaseSuccess = balancedDietPhaseErrors > 0 ? false : true;
   console.log("Balanced Diet Phase 1 Errors", balancedDietPhaseErrors);
