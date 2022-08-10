@@ -279,6 +279,19 @@ const DietForm = ({ viewOnly, setShowError, setFilteredData }) => {
                 toast.error("Excel data verification has been failed!");
               } else {
                 toast.success("Excel data has been verified successfully!");
+                // if (data) {
+                //   let foodId = currentFoodId;
+                //   await Promise.all(
+                //     data.map(async (row) => {
+                //       try {
+                //         foodId = foodId + 1;
+                //         await saveFood(row, foodId);
+                //       } catch (err) {
+                //         console.log(err);
+                //       }
+                //     })
+                //   );
+                // }
               }
             } else toast.error("Something wrong with Formatting!");
           }
