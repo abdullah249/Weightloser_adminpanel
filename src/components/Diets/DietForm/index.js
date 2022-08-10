@@ -269,7 +269,7 @@ const DietForm = ({ viewOnly, setShowError, setFilteredData }) => {
               phaseBasedCalories_1_2_3_4(result);
               checkSweetDishes(result);
               checkCreamAndButter(result);
-              // balancedDietPhase1(result);
+              balancedDietPhase1(result);
               // balancedDietPhase2(result);
               // balancedDietPhase3(result);
               // balancedDietPhase4(result);
