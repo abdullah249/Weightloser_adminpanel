@@ -85,7 +85,7 @@ const errorHandlingButterCream = (el, el2, ingredientArr, i) => {
   return false;
 };
 
-export const phaseBasedCalories1_3_4 = (data) => {
+export const phaseBasedCalories_1_2_3_4 = (data) => {
   data.map((el, i, arr) => {
     return (el.Day >= 1 && el.Day <= 7) ||
       (el.Day >= 22 && el.Day <= 42) ||

@@ -22,7 +22,7 @@ import * as _ from "lodash";
 import * as XLSX from "xlsx";
 import { formattingData } from "utils/formattingData";
 import {
-  phaseBasedCalories1_3_4,
+  phaseBasedCalories_1_2_3_4,
   checkSweetDishes,
   checkCreamAndButter,
   balancedDietPhase1,
@@ -266,32 +266,19 @@ const DietForm = ({ viewOnly, setShowError, setFilteredData }) => {
           if (data) {
             let result = formattingData(data);
             if (result) {
-              console.log("formatting Result", result);
-              // console.log(
-              //   "PhaseMeal | Sweet | ButterCream | BalanceDiet1 | BalanceDiet2 | BalanceDiet3 | BalanceDiet4",
-              //   phaseBasedCalories1_3_4(result),
-              //   checkSweetDishes(result),
-              //   checkCreamAndButter(result),
-              //   balancedDietPhase1(result),
-              //   balancedDietPhase2(result),
-              //   balancedDietPhase3(result),
-              //   balancedDietPhase4(result)
-              // );
-
-              if (
-                phaseBasedCalories1_3_4(result) &&
-                checkSweetDishes(result) &&
-                checkCreamAndButter(result) &&
-                balancedDietPhase1(result)
-                // balancedDietPhase2(result)
-                // balancedDietPhase3(result) &&
-                // balancedDietPhase4(result)
-              ) {
-                toast.success("Excel data has been verified successfully!");
-              } else {
+              phaseBasedCalories_1_2_3_4(result);
+              checkSweetDishes(result);
+              checkCreamAndButter(result);
+              // balancedDietPhase1(result);
+              // balancedDietPhase2(result);
+              // balancedDietPhase3(result);
+              // balancedDietPhase4(result);
+              if (totalErrors().length > 0) {
                 setFilteredData(totalErrors);
                 setShowError(true);
                 toast.error("Excel data verification has been failed!");
+              } else {
+                toast.success("Excel data has been verified successfully!");
               }
             } else toast.error("Something wrong with Formatting!");
           }
