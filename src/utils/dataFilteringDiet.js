@@ -219,7 +219,7 @@ const perDayNutritionValues = (el, p) => {
   fat += el.fat;
   calories += el.Calories;
   carbs += el.Carbs;
-  currentRecord = Object.assign({}, el);
+  currentRecord = { Day: p };
   if (p >= 1 && p <= 7 && el.DayName.toLowerCase() === "monday") {
     phase1MondayCalories += el.Calories;
     phase1CategoryType = el.Category;
@@ -231,7 +231,7 @@ const perDayNutritionValues = (el, p) => {
 
 export const balancedDietPhase1 = (data) => {
   var balancedDietPhaseErrors = 0;
-  for (let p = 1; p <= 3; p++) {
+  for (let p = 1; p <= 2; p++) {
     data.map((el) => {
       return p === el.Day && perDayNutritionValues(el, p);
     });
@@ -255,7 +255,7 @@ export const balancedDietPhase1 = (data) => {
       console.log("Vegetarian Phase 1 NetCarbs", true);
     } else {
       console.log("Error in Phase 1 NetCarbs", p, phase1CategoryType);
-      indexOfErrors.push(currentRecord);
+      indexOfErrors.push({ Day: p });
       balancedDietPhaseErrors++;
     }
     console.log(
@@ -277,7 +277,6 @@ export const balancedDietPhase1 = (data) => {
     fat = 0;
     calories = 0;
     phase1CategoryType = "";
-    currentRecord = {};
   }
   let balancedDietPhaseSuccess = balancedDietPhaseErrors > 0 ? false : true;
   console.log("Balanced Diet Phase 1 Errors", balancedDietPhaseErrors);
@@ -302,7 +301,7 @@ export const balancedDietPhase2 = (data) => {
       console.log("");
     else {
       balancedDietPhaseErrors++;
-      indexOfErrors.push(data[p - 1]);
+      indexOfErrors.push({ Day: p });
     }
     console.log(
       "Phase 2:",
@@ -357,7 +356,7 @@ export const balancedDietPhase3 = (data) => {
       );
     else {
       balancedDietPhaseErrors++;
-      indexOfErrors.push(data[p - 1]);
+      indexOfErrors.push({ Day: p });
     }
     netCarbs = 0;
     protein = 0;
@@ -399,7 +398,7 @@ export const balancedDietPhase4 = (data) => {
       );
     else {
       balancedDietPhaseErrors++;
-      indexOfErrors.push(data[p - 1]);
+      indexOfErrors.push({ Day: p });
     }
     netCarbs = 0;
     protein = 0;

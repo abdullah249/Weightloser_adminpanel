@@ -157,7 +157,7 @@ const Diets = () => {
       {showError && filteredData && (
         <>
           <Typography className="mt-2 mb-2" block>
-            Create New Diet
+            Excel Diet Errors
           </Typography>
           <Table
             fullHeight
