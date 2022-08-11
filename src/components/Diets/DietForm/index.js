@@ -270,9 +270,9 @@ const DietForm = ({ viewOnly, setShowError, setFilteredData }) => {
               checkSweetDishes(result);
               checkCreamAndButter(result);
               balancedDietPhase1(result);
-              // balancedDietPhase2(result);
-              // balancedDietPhase3(result);
-              // balancedDietPhase4(result);
+              balancedDietPhase2(result);
+              balancedDietPhase3(result);
+              balancedDietPhase4(result);
               if (totalErrors().length > 0) {
                 setFilteredData(totalErrors);
                 setShowError(true);
@@ -293,7 +293,7 @@ const DietForm = ({ viewOnly, setShowError, setFilteredData }) => {
                 //   );
                 // }
               }
-            } else toast.error("Something wrong with Formatting!");
+            } else toast.error("Something wrong with Excel Formatting!");
           }
           // if (data) {
           //   let foodId = currentFoodId;

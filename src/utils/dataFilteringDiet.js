@@ -5,6 +5,7 @@ import { butterCream } from "constants/filtering";
 var caloriesErrors = 0;
 var sweetDishErrors = 0;
 var butterCreamErrors = 0;
+var indexOfErrors = [];
 
 /* Per Day Nutrition Values For Phases */
 var netCarbs = 0;
@@ -12,11 +13,11 @@ var carbs = 0;
 var protein = 0;
 var fat = 0;
 var calories = 0;
+
+/* Additional Checks on Phases */
 var phase1MondayCalories = 0;
 var phase2ThursdayCalories = 0;
 var phase1CategoryType = "";
-var indexOfErrors = [];
-var currentRecord;
 
 const errorHandlingPhase = (el, i, arr) => {
   console.log(
@@ -85,11 +86,12 @@ const errorHandlingButterCream = (el, el2, ingredientArr, i) => {
   return false;
 };
 
+/* Error Handling Function */
 export const phaseBasedCalories_1_2_3_4 = (data) => {
   data.map((el, i, arr) => {
-    return (el.Day >= 1 && el.Day <= 7) ||
-      (el.Day >= 22 && el.Day <= 42) ||
-      (el.Day >= 43 && el.Day <= 70)
+    return (el.Day >= 1 && el.Day <= 7) /* Phase 1 ( 1 Week ) */ ||
+      (el.Day >= 22 && el.Day <= 42) /* Phase 3 ( 3 Weeks ) */ ||
+      (el.Day >= 43 && el.Day <= 70) /* Phase 4 ( 4 Weeks ) */
       ? el.MealType.toLowerCase() === "breakfast" &&
         el.Calories >= 200 &&
         el.Calories <= 400 &&
@@ -133,7 +135,8 @@ export const phaseBasedCalories_1_2_3_4 = (data) => {
       : el.Day >= 8 &&
         el.Day <= 21 &&
         i <= arr.length - 2 &&
-        arr[i].Name !== arr[i + 1].Name
+        arr[i].Name !==
+          arr[i + 1].Name /* Phase 2 ( 2 Weeks ) With Unique Food Name*/
       ? el.MealType.toLowerCase() === "breakfast" &&
         el.Calories >= 200 &&
         el.Calories <= 400 &&
@@ -183,6 +186,7 @@ export const phaseBasedCalories_1_2_3_4 = (data) => {
   return caloriesSuccess;
 };
 
+/* To Check Whether a Food is a Sweet Dish or not */
 export const checkSweetDishes = (data) => {
   let lowerCaseList = sweetDishesList.map((d) => d.toLowerCase());
   data.map((el, i) => {
@@ -197,6 +201,7 @@ export const checkSweetDishes = (data) => {
   return sweetDishSuccess;
 };
 
+/* To Check Whether a Food Name contain Cream and Butter */
 export const checkCreamAndButter = (data) => {
   let lowerCaseList = butterCream.map((d) => d.toLowerCase());
   data?.map((el, i) => {
@@ -219,7 +224,6 @@ const perDayNutritionValues = (el, p) => {
   fat += el.fat;
   calories += el.Calories;
   carbs += el.Carbs;
-  currentRecord = { Day: p };
   if (p >= 1 && p <= 7 && el.DayName.toLowerCase() === "monday") {
     phase1MondayCalories += el.Calories;
     phase1CategoryType = el.Category;
@@ -231,7 +235,7 @@ const perDayNutritionValues = (el, p) => {
 
 export const balancedDietPhase1 = (data) => {
   var balancedDietPhaseErrors = 0;
-  for (let p = 1; p <= 2; p++) {
+  for (let p = 1; p <= 7; p++) {
     data.map((el) => {
       return p === el.Day && perDayNutritionValues(el, p);
     });
@@ -336,12 +340,13 @@ export const balancedDietPhase3 = (data) => {
     });
     if (
       carbs >= carbs * 0.45 &&
-      carbs >= carbs * 0.65 &&
+      carbs <= carbs * 0.65 &&
       protein >= protein * 0.1 &&
-      protein >= protein * 0.35 &&
+      protein <= protein * 0.35 &&
       fat >= fat * 0.2 &&
-      fat >= fat * 0.25 &&
-      calories <= 1800
+      fat <= fat * 0.25 &&
+      calories <= 1800 &&
+      calories == phase1MondayCalories
     )
       console.log(
         "Phase 3:",
@@ -372,18 +377,20 @@ export const balancedDietPhase3 = (data) => {
 
 export const balancedDietPhase4 = (data) => {
   var balancedDietPhaseErrors = 0;
-  for (let p = 22; p <= 42; p++) {
+  for (let p = 43; p <= 70; p++) {
     data.map((el) => {
       return p === el.Day && perDayNutritionValues(el, p);
     });
     if (
       carbs >= carbs * 0.45 &&
-      carbs >= carbs * 0.65 &&
+      carbs <= carbs * 0.65 &&
       protein >= protein * 0.1 &&
-      protein >= protein * 0.35 &&
+      protein <= protein * 0.35 &&
       fat >= fat * 0.2 &&
-      fat >= fat * 0.25 &&
-      calories <= 2000
+      fat <= fat * 0.25 &&
+      calories <= 2000 &&
+      calories == phase1MondayCalories &&
+      calories == phase2ThursdayCalories
     )
       console.log(
         "Phase 4:",
@@ -412,6 +419,7 @@ export const balancedDietPhase4 = (data) => {
   return balancedDietPhaseSuccess;
 };
 
+/* To get list of all errors found in Excel Data */
 export const totalErrors = () => {
   return indexOfErrors;
 };
