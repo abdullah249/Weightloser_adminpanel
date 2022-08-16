@@ -63,35 +63,6 @@ const errorHandlingPhase = (el, i, arr) => {
   mealTypeErrorHandling(el, "snacks", 150, 300);
   mealTypeErrorHandling(el, "dinner", 400, 800);
   if (el.Day >= 1 && el.Day <= 8) duplicateNameErrorHandling(el, i, arr);
-
-  // console.log(
-  //   "Phase Meal Error:",
-  //   "Day=",
-  //   el.Day,
-  //   "MealType=",
-  //   el.MealType,
-  //   "Calories=",
-  //   el.Calories,
-  //   "Protein=",
-  //   el.Protein,
-  //   "Fats=",
-  //   el.fat,
-  //   "SaturatedFats=",
-  //   el.SatFat,
-  //   "TotalCarbs=",
-  //   el.Carbs,
-  //   "NetCarbs=",
-  //   el.SR,
-  //   "Procedure=",
-  //   el.Procedure,
-  //   "arraylength=",
-  //   arr.length,
-  //   "FoodName=",
-  //   arr[i].Name,
-  //   "Food Unique=",
-  //   i <= arr.length - 2 ? arr[i].Name !== arr[i + 1].Name : true
-  // );
-  // indexOfErrors.push(el);
   caloriesErrors++;
   return true;
 };
@@ -202,8 +173,6 @@ export const phaseBasedCalories_1_2_3_4 = (data) => {
       : true;
   });
   let caloriesSuccess = caloriesErrors > 0 ? false : true;
-  console.log("Calories Errors:", caloriesErrors);
-  console.log("Calories Success:", caloriesSuccess);
   caloriesErrors = 0;
   return caloriesSuccess;
 };
@@ -280,20 +249,6 @@ export const balancedDietPhase1 = (data) => {
       indexOfErrors.push({ Day: p });
       balancedDietPhaseErrors++;
     }
-    // console.log(
-    //   "Phase 1:",
-    //   "Net-Carbs",
-    //   netCarbs,
-    //   "Protein",
-    //   protein,
-    //   "Fat",
-    //   fat,
-    //   "Calories",
-    //   calories,
-    //   "Phase1Monday",
-    //   phase1MondayCalories,
-    //   phase2ThursdayCalories
-    // );
     netCarbs = 0;
     protein = 0;
     fat = 0;
@@ -301,8 +256,6 @@ export const balancedDietPhase1 = (data) => {
     phase1CategoryType = "";
   }
   let balancedDietPhaseSuccess = balancedDietPhaseErrors > 0 ? false : true;
-  console.log("Balanced Diet Phase 1 Errors", balancedDietPhaseErrors);
-  console.log("Balanced Diet Phase 1 Success ", balancedDietPhaseSuccess);
   balancedDietPhaseErrors = 0;
   return balancedDietPhaseSuccess;
 };
@@ -325,27 +278,12 @@ export const balancedDietPhase2 = (data) => {
       balancedDietPhaseErrors++;
       indexOfErrors.push({ Day: p });
     }
-    // console.log(
-    //   "Phase 2:",
-    //   "Net-Carbs",
-    //   netCarbs,
-    //   "Protein",
-    //   protein,
-    //   "Fat",
-    //   fat,
-    //   "Calories",
-    //   calories,
-    //   "Phase2Thursday",
-    //   phase2ThursdayCalories
-    // );
     netCarbs = 0;
     protein = 0;
     fat = 0;
     calories = 0;
   }
   let balancedDietPhaseSuccess = balancedDietPhaseErrors > 0 ? false : true;
-  console.log("Balanced Diet Phase 2 Errors", balancedDietPhaseErrors);
-  console.log("Balanced Diet Phase 2 Success ", balancedDietPhaseSuccess);
   balancedDietPhaseErrors = 0;
   return balancedDietPhaseSuccess;
 };
@@ -367,17 +305,6 @@ export const balancedDietPhase3 = (data) => {
       calories == phase1MondayCalories
     )
       console.log("");
-    // console.log(
-    //   "Phase 3:",
-    //   "Net-Carbs",
-    //   netCarbs,
-    //   "Protein",
-    //   protein,
-    //   "Fat",
-    //   fat,
-    //   "Calories",
-    //   calories
-    // );
     else {
       balancedDietPhaseErrors++;
       indexOfErrors.push({ Day: p });
@@ -388,8 +315,6 @@ export const balancedDietPhase3 = (data) => {
     calories = 0;
   }
   let balancedDietPhaseSuccess = balancedDietPhaseErrors > 0 ? false : true;
-  console.log("Balanced Diet Phase 3 Errors", balancedDietPhaseErrors);
-  console.log("Balanced Diet Phase 3 Success ", balancedDietPhaseSuccess);
   balancedDietPhaseErrors = 0;
   return balancedDietPhaseSuccess;
 };
@@ -412,17 +337,6 @@ export const balancedDietPhase4 = (data) => {
       calories == phase2ThursdayCalories
     )
       console.log("");
-    // console.log(
-    //   "Phase 4:",
-    //   "Net-Carbs",
-    //   netCarbs,
-    //   "Protein",
-    //   protein,
-    //   "Fat",
-    //   fat,
-    //   "Calories",
-    //   calories
-    // );
     else {
       balancedDietPhaseErrors++;
       indexOfErrors.push({ Day: p });
@@ -433,8 +347,6 @@ export const balancedDietPhase4 = (data) => {
     calories = 0;
   }
   let balancedDietPhaseSuccess = balancedDietPhaseErrors > 0 ? false : true;
-  console.log("Balanced Diet Phase 4 Errors", balancedDietPhaseErrors);
-  console.log("Balanced Diet Phase 4 Success ", balancedDietPhaseSuccess);
   balancedDietPhaseErrors = 0;
   return balancedDietPhaseSuccess;
 };
