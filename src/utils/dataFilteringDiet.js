@@ -63,7 +63,7 @@ const errorHandlingPhase = (el, i, arr) => {
   mealTypeErrorHandling(el, "lunch", 400, 600);
   mealTypeErrorHandling(el, "snacks", 150, 300);
   mealTypeErrorHandling(el, "dinner", 400, 800);
-  if (el.Day >= 1 && el.Day <= 8) duplicateNameErrorHandling(el, i, arr);
+
   caloriesErrors++;
   return true;
 };
@@ -202,7 +202,7 @@ export const checkCreamAndButter = (data) => {
   return butterCreamSuccess;
 };
 
-const perDayNutritionValues = (el, p) => {
+const perDayNutritionValues = (p, el, i, arr) => {
   netCarbs += el.SR;
   protein += el.Protein;
   fat += el.fat;
@@ -215,13 +215,16 @@ const perDayNutritionValues = (el, p) => {
   if (p >= 8 && p <= 14 && el.DayName.toLowerCase() === "thursday") {
     phase2ThursdayCalories += el.Calories;
   }
+
+  if (p >= 1 && p <= 17)
+    duplicateNameErrorHandling(el, i, arr); /* 17 Days Unique FoodName */
 };
 
 export const balancedDietPhase1 = (data) => {
   var balancedDietPhaseErrors = 0;
   for (let p = 1; p <= 7; p++) {
-    data.map((el) => {
-      return p === el.Day && perDayNutritionValues(el, p);
+    data.map((el, i, arr) => {
+      return p === el.Day && perDayNutritionValues(p, el, i, arr);
     });
     if (
       phase1CategoryType.toLowerCase() !== "vegetarian" &&
@@ -260,8 +263,8 @@ export const balancedDietPhase1 = (data) => {
 export const balancedDietPhase2 = (data) => {
   var balancedDietPhaseErrors = 0;
   for (let p = 8; p <= 21; p++) {
-    data.map((el) => {
-      return p === el.Day && perDayNutritionValues(el, p);
+    data.map((el, i, arr) => {
+      return p === el.Day && perDayNutritionValues(p, el, i, arr);
     });
     if (
       netCarbs <= 50 &&
@@ -288,8 +291,8 @@ export const balancedDietPhase2 = (data) => {
 export const balancedDietPhase3 = (data) => {
   var balancedDietPhaseErrors = 0;
   for (let p = 22; p <= 42; p++) {
-    data.map((el) => {
-      return p === el.Day && perDayNutritionValues(el, p);
+    data.map((el, i, arr) => {
+      return p === el.Day && perDayNutritionValues(p, el, i, arr);
     });
     if (
       carbs >= carbs * 0.45 &&
@@ -319,8 +322,8 @@ export const balancedDietPhase3 = (data) => {
 export const balancedDietPhase4 = (data) => {
   var balancedDietPhaseErrors = 0;
   for (let p = 43; p <= 70; p++) {
-    data.map((el) => {
-      return p === el.Day && perDayNutritionValues(el, p);
+    data.map((el, i, arr) => {
+      return p === el.Day && perDayNutritionValues(p, el, i, arr);
     });
     if (
       carbs >= carbs * 0.45 &&
