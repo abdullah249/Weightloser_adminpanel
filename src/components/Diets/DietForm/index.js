@@ -274,7 +274,7 @@ const DietForm = ({ viewOnly, setShowError, setFilteredData }) => {
               balancedDietPhase3(result);
               balancedDietPhase4(result);
               if (totalErrors().length > 0) {
-                setFilteredData(totalErrors);
+                setFilteredData(totalErrors().sort((a, b) => a.Day - b.Day));
                 setShowError(true);
                 toast.error("Excel data verification has been failed!");
               } else {

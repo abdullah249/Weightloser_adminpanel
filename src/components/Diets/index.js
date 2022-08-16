@@ -30,17 +30,12 @@ const Diets = () => {
   const [dashboard, setDashboard] = useState({});
   const [showError, setShowError] = useState(false);
   const [filteredData, setFilteredData] = useState([]);
-  const [search, setSearch] = useState("");
 
   useEffect(() => {
     dispatch(fetchDiets());
     dispatch(fetchFoodId());
     fetchDashboard();
   }, []);
-
-  useEffect(() => {
-    console.log("Filtered", filteredData, showError, isModalOpen);
-  }, [filteredData, showError, isModalOpen]);
 
   useEffect(() => {
     if (searchRef && searchRef.current) {

@@ -19,69 +19,91 @@ var phase1MondayCalories = 0;
 var phase2ThursdayCalories = 0;
 var phase1CategoryType = "";
 
-const errorHandlingPhase = (el, i, arr) => {
-  console.log(
-    "Phase Meal Error:",
-    "Day=",
-    el.Day,
-    "MealType=",
-    el.MealType,
-    "Calories=",
-    el.Calories,
-    "Protein=",
-    el.Protein,
-    "Fats=",
-    el.fat,
-    "SaturatedFats=",
-    el.SatFat,
-    "TotalCarbs=",
-    el.Carbs,
-    "NetCarbs=",
-    el.SR,
-    "Procedure=",
-    el.Procedure,
-    "arraylength=",
-    arr.length,
-    "FoodName=",
-    arr[i].Name,
-    "Food Unique=",
-    i <= arr.length - 2 ? arr[i].Name !== arr[i + 1].Name : true
+const errorTypesHandling = (el, errorName) => {
+  let ind = indexOfErrors.findIndex(
+    (o) => o.Day === el.Day && o.MealType === el.MealType
   );
-  indexOfErrors.push(el);
+  if (ind >= 0 && Array.isArray(indexOfErrors[ind].ErrorType))
+    indexOfErrors[ind]?.ErrorType?.push(errorName);
+  else indexOfErrors.push({ ...el, ErrorType: [errorName] });
+};
+
+const mealTypeErrorHandling = (el, meal, start, end) => {
+  if (
+    el.MealType.toLowerCase() === meal &&
+    (el.Calories < start || el.Calories > end)
+  )
+    errorTypesHandling(el, "Out of range Calories");
+};
+
+const duplicateNameErrorHandling = (el, i, arr) => {
+  if (i <= arr.length - 2) {
+    let duplicate = arr.slice(0, i).filter((o) => o.Name === el.Name);
+    if (duplicate.length > 0) {
+      errorTypesHandling(
+        el,
+        `Duplicate Name [${duplicate?.map(
+          (d) => "Day-" + d.Day + "-" + d.MealType + " "
+        )}]`
+      );
+    }
+  }
+};
+
+const errorHandlingPhase = (el, i, arr) => {
+  if (!el.Procedure) errorTypesHandling(el, "Procedure is Missing");
+  if (!el.fat) errorTypesHandling(el, "Fat is Missing");
+  if (!el.Carbs) errorTypesHandling(el, "Carbs are Missing");
+  if (!el.Protein) errorTypesHandling(el, "Protein is Missing");
+  if (!el.SR) errorTypesHandling(el, "Net Carbs are Missing");
+  if (!el.SatFat) errorTypesHandling(el, "Saturated Fat is Missing");
+
+  mealTypeErrorHandling(el, "breakfast", 200, 400);
+  mealTypeErrorHandling(el, "lunch", 400, 600);
+  mealTypeErrorHandling(el, "snacks", 150, 300);
+  mealTypeErrorHandling(el, "dinner", 400, 800);
+  if (el.Day >= 1 && el.Day <= 8) duplicateNameErrorHandling(el, i, arr);
+
+  // console.log(
+  //   "Phase Meal Error:",
+  //   "Day=",
+  //   el.Day,
+  //   "MealType=",
+  //   el.MealType,
+  //   "Calories=",
+  //   el.Calories,
+  //   "Protein=",
+  //   el.Protein,
+  //   "Fats=",
+  //   el.fat,
+  //   "SaturatedFats=",
+  //   el.SatFat,
+  //   "TotalCarbs=",
+  //   el.Carbs,
+  //   "NetCarbs=",
+  //   el.SR,
+  //   "Procedure=",
+  //   el.Procedure,
+  //   "arraylength=",
+  //   arr.length,
+  //   "FoodName=",
+  //   arr[i].Name,
+  //   "Food Unique=",
+  //   i <= arr.length - 2 ? arr[i].Name !== arr[i + 1].Name : true
+  // );
+  // indexOfErrors.push(el);
   caloriesErrors++;
   return true;
 };
 
-const errorHandlingSweetDishes = (el, i) => {
-  console.log(
-    "Sweet Dish Error:",
-    "FoodName=",
-    el.Name,
-    "Day=",
-    el.Day,
-    "MealType=",
-    el.MealType
-  );
-  indexOfErrors.push(el);
+const errorHandlingSweetDishes = (el) => {
+  errorTypesHandling(el, "Sweet Dish");
   sweetDishErrors++;
   return false;
 };
 
-const errorHandlingButterCream = (el, el2, ingredientArr, i) => {
-  console.log(
-    "Butter Cream Error:",
-    "FoodName=",
-    el.Name,
-    "Day=",
-    el.Day,
-    "MealType=",
-    el.MealType,
-    "IngredientList=",
-    ingredientArr,
-    "Error on ingredient=",
-    el2
-  );
-  indexOfErrors.push(el);
+const errorHandlingButterCream = (el) => {
+  errorTypesHandling(el, "Cream and Butter in Ingredients");
   butterCreamErrors++;
   return false;
 };
@@ -191,12 +213,10 @@ export const checkSweetDishes = (data) => {
   let lowerCaseList = sweetDishesList.map((d) => d.toLowerCase());
   data.map((el, i) => {
     return lowerCaseList.includes(el.Name.toLowerCase())
-      ? errorHandlingSweetDishes(el, i)
+      ? errorHandlingSweetDishes(el)
       : true;
   });
   let sweetDishSuccess = sweetDishErrors > 0 ? false : true;
-  console.log("Sweet Erros", sweetDishErrors);
-  console.log("Sweet Success ", sweetDishSuccess);
   sweetDishErrors = 0;
   return sweetDishSuccess;
 };
@@ -205,15 +225,13 @@ export const checkSweetDishes = (data) => {
 export const checkCreamAndButter = (data) => {
   let lowerCaseList = butterCream.map((d) => d.toLowerCase());
   data?.map((el, i) => {
-    return el?.DetailsDesc?.map((el2, arr) => {
+    return el?.DetailsDesc?.map((el2) => {
       return lowerCaseList.includes(el2.toLowerCase())
-        ? errorHandlingButterCream(el, el2, arr, i)
+        ? errorHandlingButterCream(el)
         : true;
     });
   });
   let butterCreamSuccess = butterCreamErrors > 0 ? false : true;
-  console.log("Butter Cream Errors", butterCreamErrors);
-  console.log("Butter Cream Success ", butterCreamSuccess);
   butterCreamErrors = 0;
   return butterCreamSuccess;
 };
@@ -262,20 +280,20 @@ export const balancedDietPhase1 = (data) => {
       indexOfErrors.push({ Day: p });
       balancedDietPhaseErrors++;
     }
-    console.log(
-      "Phase 1:",
-      "Net-Carbs",
-      netCarbs,
-      "Protein",
-      protein,
-      "Fat",
-      fat,
-      "Calories",
-      calories,
-      "Phase1Monday",
-      phase1MondayCalories,
-      phase2ThursdayCalories
-    );
+    // console.log(
+    //   "Phase 1:",
+    //   "Net-Carbs",
+    //   netCarbs,
+    //   "Protein",
+    //   protein,
+    //   "Fat",
+    //   fat,
+    //   "Calories",
+    //   calories,
+    //   "Phase1Monday",
+    //   phase1MondayCalories,
+    //   phase2ThursdayCalories
+    // );
     netCarbs = 0;
     protein = 0;
     fat = 0;
@@ -307,19 +325,19 @@ export const balancedDietPhase2 = (data) => {
       balancedDietPhaseErrors++;
       indexOfErrors.push({ Day: p });
     }
-    console.log(
-      "Phase 2:",
-      "Net-Carbs",
-      netCarbs,
-      "Protein",
-      protein,
-      "Fat",
-      fat,
-      "Calories",
-      calories,
-      "Phase2Thursday",
-      phase2ThursdayCalories
-    );
+    // console.log(
+    //   "Phase 2:",
+    //   "Net-Carbs",
+    //   netCarbs,
+    //   "Protein",
+    //   protein,
+    //   "Fat",
+    //   fat,
+    //   "Calories",
+    //   calories,
+    //   "Phase2Thursday",
+    //   phase2ThursdayCalories
+    // );
     netCarbs = 0;
     protein = 0;
     fat = 0;
@@ -348,17 +366,18 @@ export const balancedDietPhase3 = (data) => {
       calories <= 1800 &&
       calories == phase1MondayCalories
     )
-      console.log(
-        "Phase 3:",
-        "Net-Carbs",
-        netCarbs,
-        "Protein",
-        protein,
-        "Fat",
-        fat,
-        "Calories",
-        calories
-      );
+      console.log("");
+    // console.log(
+    //   "Phase 3:",
+    //   "Net-Carbs",
+    //   netCarbs,
+    //   "Protein",
+    //   protein,
+    //   "Fat",
+    //   fat,
+    //   "Calories",
+    //   calories
+    // );
     else {
       balancedDietPhaseErrors++;
       indexOfErrors.push({ Day: p });
@@ -392,17 +411,18 @@ export const balancedDietPhase4 = (data) => {
       calories == phase1MondayCalories &&
       calories == phase2ThursdayCalories
     )
-      console.log(
-        "Phase 4:",
-        "Net-Carbs",
-        netCarbs,
-        "Protein",
-        protein,
-        "Fat",
-        fat,
-        "Calories",
-        calories
-      );
+      console.log("");
+    // console.log(
+    //   "Phase 4:",
+    //   "Net-Carbs",
+    //   netCarbs,
+    //   "Protein",
+    //   protein,
+    //   "Fat",
+    //   fat,
+    //   "Calories",
+    //   calories
+    // );
     else {
       balancedDietPhaseErrors++;
       indexOfErrors.push({ Day: p });

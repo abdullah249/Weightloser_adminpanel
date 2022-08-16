@@ -19,10 +19,17 @@ export const excelDietColumns = [
     dataKey: "Calories",
     title: "Calories",
   },
-  // {
-  //   dataKey: "fat",
-  //   title: "Fat",
-  // },
+  {
+    dataKey: "ErrorType",
+    title: "ErrorType",
+    render: ({ ErrorType }) => (
+      <ul>
+        {ErrorType?.map((err) => (
+          <li>{err}</li>
+        ))}
+      </ul>
+    ),
+  },
   // {
   //   dataKey: "Protein",
   //   title: "Protein",
