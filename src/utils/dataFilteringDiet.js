@@ -37,7 +37,8 @@ const mealTypeErrorHandling = (el, meal, start, end) => {
 };
 
 const duplicateNameErrorHandling = (el, i, arr) => {
-  if (i <= arr.length - 2) {
+  if (i <= arr.length - 1) {
+    console.log("UNIQUE", el, i, arr);
     let duplicate = arr.slice(0, i).filter((o) => o.Name === el.Name);
     if (duplicate.length > 0) {
       errorTypesHandling(
@@ -125,11 +126,7 @@ export const phaseBasedCalories_1_2_3_4 = (data) => {
           el.SR
         ? true
         : errorHandlingPhase(el, i, arr)
-      : el.Day >= 8 &&
-        el.Day <= 21 &&
-        i <= arr.length - 2 &&
-        arr[i].Name !==
-          arr[i + 1].Name /* Phase 2 ( 2 Weeks ) With Unique Food Name*/
+      : el.Day >= 8 && el.Day <= 21
       ? el.MealType.toLowerCase() === "breakfast" &&
         el.Calories >= 200 &&
         el.Calories <= 400 &&
@@ -170,7 +167,7 @@ export const phaseBasedCalories_1_2_3_4 = (data) => {
           el.SR
         ? true
         : errorHandlingPhase(el, i, arr)
-      : true;
+      : errorHandlingPhase(el, i, arr);
   });
   let caloriesSuccess = caloriesErrors > 0 ? false : true;
   caloriesErrors = 0;
