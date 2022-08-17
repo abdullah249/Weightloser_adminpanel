@@ -28,17 +28,24 @@ const errorTypesHandling = (el, errorName) => {
   else indexOfErrors.push({ ...el, ErrorType: [errorName] });
 };
 
+const errorTypesHandlingBalancedDiet = (p, errorName) => {
+  let ind = indexOfErrors.findIndex((o) => o.Day === p && !o.MealType);
+  if (ind >= 0 && Array.isArray(indexOfErrors[ind].ErrorType))
+    indexOfErrors[ind].ErrorType.push(errorName);
+  if (ind >= 0 && !indexOfErrors[ind].ErrorType)
+    indexOfErrors[ind].ErrorType = [errorName];
+};
+
 const mealTypeErrorHandling = (el, meal, start, end) => {
   if (
     el.MealType.toLowerCase() === meal &&
     (el.Calories < start || el.Calories > end)
   )
-    errorTypesHandling(el, "Out of range Calories");
+    errorTypesHandling(el, "Calories Out of range");
 };
 
 const duplicateNameErrorHandling = (el, i, arr) => {
   if (i <= arr.length - 1) {
-    console.log("UNIQUE", el, i, arr);
     let duplicate = arr.slice(0, i).filter((o) => o.Name === el.Name);
     if (duplicate.length > 0) {
       errorTypesHandling(
@@ -64,10 +71,67 @@ const errorHandlingPhase = (el, i, arr) => {
   mealTypeErrorHandling(el, "snacks", 150, 300);
   mealTypeErrorHandling(el, "dinner", 400, 800);
 
+  if (el.Day >= 8 && el.Day <= 21 && el.MealType.toLowerCase() === "dinner") {
+    if (el.Carbs !== 0)
+      errorTypesHandling(el, "Dinner carbs should be 0 in Phase 2");
+  }
   caloriesErrors++;
   return true;
 };
 
+const errorHandlingBalancedDiet = (p) => {
+  if (p >= 1 && p <= 7) {
+    if (protein < 100)
+      errorTypesHandlingBalancedDiet(p, "Protein out of range(Less than 100)");
+    if (fat >= 100)
+      errorTypesHandlingBalancedDiet(p, "Fat out of range(Greater than 100)");
+    if (calories < 1700 || calories > 1800)
+      errorTypesHandlingBalancedDiet(
+        p,
+        "Calories out of range(Should be between(1700-1800)"
+      );
+
+    if (phase1CategoryType.toLowerCase() === "vegetarian") {
+      if (netCarbs > 50)
+        errorTypesHandlingBalancedDiet(p, "Net Carbs out of range");
+    } else {
+      if (netCarbs > 25)
+        errorTypesHandlingBalancedDiet(p, "Net Carbs out of range");
+    }
+  }
+
+  if (p >= 8 && p <= 21) {
+    if (netCarbs > 50)
+      errorTypesHandlingBalancedDiet(
+        p,
+        "Net Carbs out of range(Less than 100)"
+      );
+    if (protein < 100)
+      errorTypesHandlingBalancedDiet(p, "Protein out of range(Less than 100)");
+    if (fat >= 80)
+      errorTypesHandlingBalancedDiet(p, "Fat out of range(Greater than 100)");
+    if (calories < 1500 || calories > 1600)
+      errorTypesHandlingBalancedDiet(
+        p,
+        "Calories out of range(Should be between(1700-1800)"
+      );
+  }
+
+  // if (p >= 22 && p <= 42) {
+  //   if (carbs < carbs * 0.45 || carbs > carbs * 0.65)
+  //     errorTypesHandlingBalancedDiet(
+  //       p,
+  //       "Carbs out of range(Should be between(45%-65%))"
+  //     );
+  //     if (protein < protein * 0.1 || protein > protein * 0.35)
+  //     errorTypesHandlingBalancedDiet(
+  //       p,
+  //       "Protein out of range(Should be between(45%-65%))"
+  //     );
+  // }
+
+  return true;
+};
 const errorHandlingSweetDishes = (el) => {
   errorTypesHandling(el, "Sweet Dish");
   sweetDishErrors++;
@@ -208,16 +272,20 @@ const perDayNutritionValues = (p, el, i, arr) => {
   fat += el.fat;
   calories += el.Calories;
   carbs += el.Carbs;
-  if (p >= 1 && p <= 7 && el.DayName.toLowerCase() === "monday") {
-    phase1MondayCalories += el.Calories;
+  if (p >= 1 && p <= 7) {
+    if (el.DayName.toLowerCase() === "monday")
+      phase1MondayCalories += el.Calories;
     phase1CategoryType = el.Category;
   }
+
   if (p >= 8 && p <= 14 && el.DayName.toLowerCase() === "thursday") {
     phase2ThursdayCalories += el.Calories;
   }
 
-  if (p >= 1 && p <= 17)
-    duplicateNameErrorHandling(el, i, arr); /* 17 Days Unique FoodName */
+  if (p >= 1 && p <= 17) duplicateNameErrorHandling(el, i, arr);
+
+  // if (p >= 18 && p <= 21)
+  // duplicateNameErrorHandling(el, i, arr); /* Phase2 4 Repetitive Days */
 };
 
 export const balancedDietPhase1 = (data) => {
@@ -234,7 +302,7 @@ export const balancedDietPhase1 = (data) => {
       calories >= 1700 &&
       calories <= 1800
     )
-      console.log("Except vegetarian Phase 1 NetCarbs", p);
+      console.log("");
     else if (
       phase1CategoryType.toLowerCase() === "vegetarian" &&
       netCarbs <= 50 &&
@@ -243,10 +311,10 @@ export const balancedDietPhase1 = (data) => {
       calories >= 1700 &&
       calories <= 1800
     ) {
-      console.log("Vegetarian Phase 1 NetCarbs", true);
+      console.log("");
     } else {
-      console.log("Error in Phase 1 NetCarbs", p, phase1CategoryType);
       indexOfErrors.push({ Day: p });
+      errorHandlingBalancedDiet(p);
       balancedDietPhaseErrors++;
     }
     netCarbs = 0;
@@ -270,8 +338,8 @@ export const balancedDietPhase2 = (data) => {
       netCarbs <= 50 &&
       protein > 100 &&
       fat < 80 &&
-      calories >= 1700 &&
-      calories <= 1500
+      calories >= 1500 &&
+      calories <= 1600
     )
       console.log("");
     else {
