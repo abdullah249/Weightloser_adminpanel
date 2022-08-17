@@ -113,7 +113,7 @@ const errorHandlingBalancedDiet = (p) => {
     if (calories < 1500 || calories > 1600)
       errorTypesHandlingBalancedDiet(
         p,
-        "Calories out of range(Should be between(1700-1800)"
+        "Calories out of range(Should be between(1500-1600)"
       );
   }
 
@@ -345,6 +345,7 @@ export const balancedDietPhase2 = (data) => {
     else {
       balancedDietPhaseErrors++;
       indexOfErrors.push({ Day: p });
+      errorHandlingBalancedDiet(p);
     }
     netCarbs = 0;
     protein = 0;
