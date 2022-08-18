@@ -29,15 +29,18 @@ const errorTypesHandling = (el, errorName) => {
   let ind = indexOfErrors.findIndex(
     (o) => o.Day === el.Day && o.MealType === el.MealType
   );
-  if (ind >= 0 && Array.isArray(indexOfErrors[ind].ErrorType))
-    indexOfErrors[ind]?.ErrorType?.push(errorName);
-  else indexOfErrors.push({ ...el, ErrorType: [errorName] });
+  if (ind >= 0 && Array.isArray(indexOfErrors[ind].ErrorType)) {
+    indexOfErrors[ind].ErrorType.push(errorName);
+    indexOfErrors[ind].ErrorType = [...new Set(indexOfErrors[ind]?.ErrorType)];
+  } else indexOfErrors.push({ ...el, ErrorType: [errorName] });
 };
 
 const errorTypesHandlingBalancedDiet = (p, errorName) => {
   let ind = indexOfErrors.findIndex((o) => o.Day === p && !o.MealType);
-  if (ind >= 0 && Array.isArray(indexOfErrors[ind].ErrorType))
+  if (ind >= 0 && Array.isArray(indexOfErrors[ind].ErrorType)) {
     indexOfErrors[ind].ErrorType.push(errorName);
+    indexOfErrors[ind].ErrorType = [...new Set(indexOfErrors[ind]?.ErrorType)];
+  }
   if (ind >= 0 && !indexOfErrors[ind].ErrorType)
     indexOfErrors[ind].ErrorType = [errorName];
 };
