@@ -14,10 +14,16 @@ var protein = 0;
 var fat = 0;
 var calories = 0;
 
+var carbsPercentage = 0;
+var proteinPercentage = 0;
+var fatPercentage = 0;
+
 /* Additional Checks on Phases */
 var phase1MondayCalories = 0;
 var phase2ThursdayCalories = 0;
 var phase1CategoryType = "";
+var dayName = "";
+var phase2RepeatCalories = 0;
 
 const errorTypesHandling = (el, errorName) => {
   let ind = indexOfErrors.findIndex(
@@ -79,7 +85,7 @@ const errorHandlingPhase = (el, i, arr) => {
   return true;
 };
 
-const errorHandlingBalancedDiet = (p) => {
+const errorHandlingBalancedDiet = (p, mon, thurs) => {
   if (p >= 1 && p <= 7) {
     if (protein < 100)
       errorTypesHandlingBalancedDiet(p, "Protein out of range(Less than 100)");
@@ -115,20 +121,84 @@ const errorHandlingBalancedDiet = (p) => {
         p,
         "Calories out of range(Should be between(1500-1600)"
       );
+    if (p >= 19 && p <= 21) {
+      if (calories !== phase2RepeatCalories)
+        errorTypesHandlingBalancedDiet(p, "Phase 2 Last 4 Days Repetition");
+    }
   }
 
-  // if (p >= 22 && p <= 42) {
-  //   if (carbs < carbs * 0.45 || carbs > carbs * 0.65)
-  //     errorTypesHandlingBalancedDiet(
-  //       p,
-  //       "Carbs out of range(Should be between(45%-65%))"
-  //     );
-  //     if (protein < protein * 0.1 || protein > protein * 0.35)
-  //     errorTypesHandlingBalancedDiet(
-  //       p,
-  //       "Protein out of range(Should be between(45%-65%))"
-  //     );
-  // }
+  if (p >= 22 && p <= 70) {
+    if (carbsPercentage < 0.45 || carbsPercentage > 0.65)
+      errorTypesHandlingBalancedDiet(
+        p,
+        "Carbs % out of range (Should be between(45%-65%))"
+      );
+
+    if (proteinPercentage < 0.1 || proteinPercentage > 0.35)
+      errorTypesHandlingBalancedDiet(
+        p,
+        "Protein % out of range(Should be between(10%-35%))"
+      );
+
+    if (fatPercentage < 0.2 || fatPercentage > 0.25)
+      errorTypesHandlingBalancedDiet(
+        p,
+        "Fat % out of range(Should be between(20%-25%))"
+      );
+    if (p >= 22 && p <= 42) {
+      if (mon === false) {
+        if (calories > 1800) {
+          errorTypesHandlingBalancedDiet(
+            p,
+            "Phase 3 Calories out of range(Should not be max than 1800))"
+          );
+        }
+      }
+      if (mon === true) {
+        if (calories !== phase1MondayCalories) {
+          errorTypesHandlingBalancedDiet(
+            p,
+            "Phase3 Monday Calories out of range(Should be same as Phase1 Monday Calories))"
+          );
+        }
+      }
+    }
+
+    if (p >= 43 && p <= 70) {
+      if (mon === false) {
+        if (calories > 2000) {
+          errorTypesHandlingBalancedDiet(
+            p,
+            "Calories out of range(Should not be max than 2000))"
+          );
+        }
+      }
+      if (mon === true) {
+        if (calories !== phase1MondayCalories) {
+          errorTypesHandlingBalancedDiet(
+            p,
+            "Phase4 Monday Calories out of range(Should be same as Phase1 Monday Calories))"
+          );
+        }
+      }
+      if (thurs === false) {
+        if (calories !== phase2ThursdayCalories) {
+          errorTypesHandlingBalancedDiet(
+            p,
+            "Phase 4 Calories out of range(Should not be max than 2000))"
+          );
+        }
+      }
+      if (thurs === true) {
+        if (calories !== phase1MondayCalories) {
+          errorTypesHandlingBalancedDiet(
+            p,
+            "Phase4 Thursday Calories out of range(Should be same as Phase2 Thursday Calories))"
+          );
+        }
+      }
+    }
+  }
 
   return true;
 };
@@ -272,20 +342,40 @@ const perDayNutritionValues = (p, el, i, arr) => {
   fat += el.fat;
   calories += el.Calories;
   carbs += el.Carbs;
-  if (p >= 1 && p <= 7) {
-    if (el.DayName.toLowerCase() === "monday")
-      phase1MondayCalories += el.Calories;
-    phase1CategoryType = el.Category;
+  dayName = el.DayName;
+
+  if (p >= 1 && p <= 17) {
+    if (p >= 1 && p <= 7) {
+      if (el.DayName.toLowerCase() === "monday")
+        phase1MondayCalories += el.Calories;
+      phase1CategoryType = el.Category;
+    }
+    if (p >= 8 && p <= 14 && el.DayName.toLowerCase() === "thursday") {
+      phase2ThursdayCalories += el.Calories;
+    }
+    duplicateNameErrorHandling(el, i, arr);
   }
 
-  if (p >= 8 && p <= 14 && el.DayName.toLowerCase() === "thursday") {
-    phase2ThursdayCalories += el.Calories;
+  if (p === 18) {
+    phase2RepeatCalories += el.Calories;
   }
 
-  if (p >= 1 && p <= 17) duplicateNameErrorHandling(el, i, arr);
+  if (p >= 25 && p <= 39 && el.DayName.toLowerCase() !== "monday")
+    duplicateNameErrorHandling(el, i, arr);
+};
 
-  // if (p >= 18 && p <= 21)
-  // duplicateNameErrorHandling(el, i, arr); /* Phase2 4 Repetitive Days */
+const perDayNutritionValuesPercentage = () => {
+  carbsPercentage = Number(((carbs * 4) / calories).toFixed(2));
+  proteinPercentage = Number(((protein * 4) / calories).toFixed(2));
+  fatPercentage = Number(((fat * 9) / calories).toFixed(2));
+};
+
+const checkMondayAndThursdayCalories = (dayName, checkCalories, day) => {
+  if (dayName.toLowerCase() === dayName) {
+    if (calories === checkCalories) console.log("");
+    else errorHandlingBalancedDiet(day, true, true);
+    // else errorTypesHandlingBalancedDiet(day, errMsg);
+  }
 };
 
 export const balancedDietPhase1 = (data) => {
@@ -319,6 +409,7 @@ export const balancedDietPhase1 = (data) => {
     }
     netCarbs = 0;
     protein = 0;
+    carbs = 0;
     fat = 0;
     calories = 0;
     phase1CategoryType = "";
@@ -347,7 +438,12 @@ export const balancedDietPhase2 = (data) => {
       indexOfErrors.push({ Day: p });
       errorHandlingBalancedDiet(p);
     }
+    if (p >= 19 && p <= 21) {
+      if (calories === phase2RepeatCalories) console.log("");
+      else errorHandlingBalancedDiet(p);
+    }
     netCarbs = 0;
+    carbs = 0;
     protein = 0;
     fat = 0;
     calories = 0;
@@ -363,25 +459,34 @@ export const balancedDietPhase3 = (data) => {
     data.map((el, i, arr) => {
       return p === el.Day && perDayNutritionValues(p, el, i, arr);
     });
+    perDayNutritionValuesPercentage();
     if (
-      carbs >= carbs * 0.45 &&
-      carbs <= carbs * 0.65 &&
-      protein >= protein * 0.1 &&
-      protein <= protein * 0.35 &&
-      fat >= fat * 0.2 &&
-      fat <= fat * 0.25 &&
-      calories <= 1800 &&
-      calories == phase1MondayCalories
+      dayName.toLowerCase() !== "monday" &&
+      carbsPercentage >= 0.45 &&
+      carbsPercentage <= 0.65 &&
+      proteinPercentage >= 0.1 &&
+      proteinPercentage <= 0.35 &&
+      fatPercentage >= 0.2 &&
+      fatPercentage <= 0.25 &&
+      calories <= 1800
     )
       console.log("");
     else {
       balancedDietPhaseErrors++;
       indexOfErrors.push({ Day: p });
+      errorHandlingBalancedDiet(p, false);
     }
+    checkMondayAndThursdayCalories("monday", phase1MondayCalories, p);
+
     netCarbs = 0;
+    carbs = 0;
     protein = 0;
     fat = 0;
     calories = 0;
+    carbsPercentage = 0;
+    proteinPercentage = 0;
+    fatPercentage = 0;
+    dayName = "";
   }
   let balancedDietPhaseSuccess = balancedDietPhaseErrors > 0 ? false : true;
   balancedDietPhaseErrors = 0;
@@ -394,26 +499,33 @@ export const balancedDietPhase4 = (data) => {
     data.map((el, i, arr) => {
       return p === el.Day && perDayNutritionValues(p, el, i, arr);
     });
+    perDayNutritionValuesPercentage();
     if (
-      carbs >= carbs * 0.45 &&
-      carbs <= carbs * 0.65 &&
-      protein >= protein * 0.1 &&
-      protein <= protein * 0.35 &&
-      fat >= fat * 0.2 &&
-      fat <= fat * 0.25 &&
-      calories <= 2000 &&
-      calories == phase1MondayCalories &&
-      calories == phase2ThursdayCalories
+      carbsPercentage >= 0.45 &&
+      carbsPercentage <= 0.65 &&
+      proteinPercentage >= 0.1 &&
+      proteinPercentage <= 0.35 &&
+      fatPercentage >= 0.2 &&
+      fatPercentage <= 0.25 &&
+      calories <= 2000
     )
       console.log("");
     else {
       balancedDietPhaseErrors++;
       indexOfErrors.push({ Day: p });
+      errorHandlingBalancedDiet(p);
     }
+    checkMondayAndThursdayCalories("monday", phase1MondayCalories, p);
+    checkMondayAndThursdayCalories("thursday", phase2ThursdayCalories, p);
+
     netCarbs = 0;
+    carbs = 0;
     protein = 0;
     fat = 0;
     calories = 0;
+    carbsPercentage = 0;
+    proteinPercentage = 0;
+    fatPercentage = 0;
   }
   let balancedDietPhaseSuccess = balancedDietPhaseErrors > 0 ? false : true;
   balancedDietPhaseErrors = 0;
