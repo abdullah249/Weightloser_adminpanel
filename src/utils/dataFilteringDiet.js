@@ -69,11 +69,11 @@ const duplicateNameErrorHandling = (el, i, arr) => {
 
 const errorHandlingPhase = (el, i, arr) => {
   if (!el.Procedure) errorTypesHandling(el, "Procedure is Missing");
-  if (!el.fat) errorTypesHandling(el, "Fat is Missing");
-  if (!el.Carbs) errorTypesHandling(el, "Carbs are Missing");
-  if (!el.Protein) errorTypesHandling(el, "Protein is Missing");
-  if (!el.SR) errorTypesHandling(el, "Net Carbs are Missing");
-  if (!el.SatFat) errorTypesHandling(el, "Saturated Fat is Missing");
+  if (isNaN(el.fat)) errorTypesHandling(el, "Fat is Missing");
+  if (isNaN(el.Carbs)) errorTypesHandling(el, "Carbs are Missing");
+  if (isNaN(el.Protein)) errorTypesHandling(el, "Protein is Missing");
+  if (isNaN(el.SR)) errorTypesHandling(el, "Net Carbs are Missing");
+  if (isNaN(el.SatFat)) errorTypesHandling(el, "Saturated Fat is Missing");
 
   mealTypeErrorHandling(el, "breakfast", 200, 400);
   mealTypeErrorHandling(el, "lunch", 400, 600);
@@ -226,82 +226,82 @@ export const phaseBasedCalories_1_2_3_4 = (data) => {
       ? el.MealType.toLowerCase() === "breakfast" &&
         el.Calories >= 200 &&
         el.Calories <= 400 &&
-        el.Protein &&
+        !isNaN(el.Protein) &&
         el.Procedure &&
-        el.Carbs &&
-        el.SatFat &&
-        el.fat &&
-        el.SR
+        !isNaN(el.Carbs) &&
+        !isNaN(el.SatFat) &&
+        !isNaN(el.fat) &&
+        !isNaN(el.SR)
         ? true
         : el.MealType.toLowerCase() === "lunch" &&
           el.Calories >= 400 &&
           el.Calories <= 600 &&
-          el.Protein &&
+          !isNaN(el.Protein) &&
           el.Procedure &&
-          el.Carbs &&
-          el.SatFat &&
-          el.fat &&
-          el.SR
+          !isNaN(el.Carbs) &&
+          !isNaN(el.SatFat) &&
+          !isNaN(el.fat) &&
+          !isNaN(el.SR)
         ? true
         : el.MealType.toLowerCase() === "snacks" &&
           el.Calories >= 150 &&
           el.Calories <= 300 &&
-          el.Protein &&
-          el.Carbs &&
-          el.SatFat &&
-          el.fat &&
-          el.SR
+          !isNaN(el.Protein) &&
+          !isNaN(el.Carbs) &&
+          !isNaN(el.SatFat) &&
+          !isNaN(el.fat) &&
+          !isNaN(el.SR)
         ? true
         : el.MealType.toLowerCase() === "dinner" &&
           el.Calories >= 400 &&
           el.Calories <= 800 &&
-          el.Protein &&
+          !isNaN(el.Protein) &&
           el.Procedure &&
-          el.Carbs &&
-          el.SatFat &&
-          el.fat &&
-          el.SR
+          !isNaN(el.Carbs) &&
+          !isNaN(el.SatFat) &&
+          !isNaN(el.fat) &&
+          !isNaN(el.SR)
         ? true
         : errorHandlingPhase(el, i, arr)
       : el.Day >= 8 && el.Day <= 21
       ? el.MealType.toLowerCase() === "breakfast" &&
         el.Calories >= 200 &&
         el.Calories <= 400 &&
-        el.Protein &&
+        !isNaN(el.Protein) &&
         el.Procedure &&
-        el.Carbs &&
-        el.SatFat &&
-        el.fat &&
-        el.SR
+        !isNaN(el.Carbs) &&
+        !isNaN(el.SatFat) &&
+        !isNaN(el.fat) &&
+        !isNaN(el.SR)
         ? true
         : el.MealType.toLowerCase() === "lunch" &&
           el.Calories >= 400 &&
           el.Calories <= 600 &&
-          el.Protein &&
+          !isNaN(el.Protein) &&
           el.Procedure &&
-          el.Carbs &&
-          el.SatFat &&
-          el.fat &&
-          el.SR
+          !isNaN(el.Carbs) &&
+          !isNaN(el.SatFat) &&
+          !isNaN(el.fat) &&
+          !isNaN(el.SR)
         ? true
         : el.MealType.toLowerCase() === "snacks" &&
           el.Calories >= 150 &&
           el.Calories <= 300 &&
-          el.Protein &&
-          el.Carbs &&
-          el.SatFat &&
-          el.fat &&
-          el.SR
+          !isNaN(el.Protein) &&
+          !isNaN(el.Carbs) &&
+          !isNaN(el.SatFat) &&
+          !isNaN(el.fat) &&
+          !isNaN(el.SR)
         ? true
         : el.MealType.toLowerCase() === "dinner" &&
           el.Carbs === 0 &&
           el.Calories >= 400 &&
           el.Calories <= 800 &&
-          el.Protein &&
+          !isNaN(el.Protein) &&
           el.Procedure &&
-          el.SatFat &&
-          el.fat &&
-          el.SR
+          !isNaN(el.SatFat) &&
+          !isNaN(el.fat) &&
+          !isNaN(el.SR)
         ? true
         : errorHandlingPhase(el, i, arr)
       : errorHandlingPhase(el, i, arr);
@@ -390,8 +390,8 @@ export const balancedDietPhase1 = (data) => {
     if (
       phase1CategoryType.toLowerCase() !== "vegetarian" &&
       netCarbs <= 25 &&
-      protein > 100 &&
-      fat < 100 &&
+      protein >= 100 &&
+      fat <= 100 &&
       calories >= 1700 &&
       calories <= 1800
     )
@@ -399,8 +399,8 @@ export const balancedDietPhase1 = (data) => {
     else if (
       phase1CategoryType.toLowerCase() === "vegetarian" &&
       netCarbs <= 50 &&
-      protein > 100 &&
-      fat < 100 &&
+      protein >= 100 &&
+      fat <= 100 &&
       calories >= 1700 &&
       calories <= 1800
     ) {
@@ -430,8 +430,8 @@ export const balancedDietPhase2 = (data) => {
     });
     if (
       netCarbs <= 50 &&
-      protein > 100 &&
-      fat < 80 &&
+      protein >= 100 &&
+      fat <= 80 &&
       calories >= 1500 &&
       calories <= 1600
     )
