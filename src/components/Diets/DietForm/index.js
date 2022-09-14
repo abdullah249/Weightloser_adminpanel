@@ -265,7 +265,7 @@ const DietForm = ({ viewOnly, setShowError, setFilteredData }) => {
           const data = XLSX.utils.sheet_to_json(worksheet);
           if (data) {
             let result = formattingData(data);
-            if (result) {
+            // if (result) {
               // phaseBasedCalories_1_2_3_4(result);
               // checkSweetDishes(result);
               // checkCreamAndButter(result);
@@ -296,7 +296,6 @@ const DietForm = ({ viewOnly, setShowError, setFilteredData }) => {
             } else toast.error("Something wrong with Excel Formatting!");
           }
         }
-      };
     } else toast.error("Please upload only excel file!");
   };
 
