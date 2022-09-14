@@ -266,13 +266,13 @@ const DietForm = ({ viewOnly, setShowError, setFilteredData }) => {
           if (data) {
             let result = formattingData(data);
             if (result) {
-              phaseBasedCalories_1_2_3_4(result);
-              checkSweetDishes(result);
-              checkCreamAndButter(result);
-              balancedDietPhase1(result);
-              balancedDietPhase2(result);
-              balancedDietPhase3(result);
-              balancedDietPhase4(result);
+              // phaseBasedCalories_1_2_3_4(result);
+              // checkSweetDishes(result);
+              // checkCreamAndButter(result);
+              // balancedDietPhase1(result);
+              // balancedDietPhase2(result);
+              // balancedDietPhase3(result);
+              // balancedDietPhase4(result);
               if (totalErrors().length > 0) {
                 setFilteredData(totalErrors().sort((a, b) => a.Day - b.Day));
                 setShowError(true);
