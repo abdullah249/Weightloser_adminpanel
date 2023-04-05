@@ -32,7 +32,6 @@ export const API_URLS = {
     search: (name) => "food/foodsearch?name=" + name,
     add: "plan/foodplan",
     getById: (id) => `food/${id}`,
-    search: (name) => "food/foodsearch?name=" + name,
     new: "food/add",
     addDetails: `foodDetails`,
     update: "food/update",
@@ -59,9 +58,6 @@ export const API_URLS = {
     getById: (id) => `coupon/${id}`,
     update: `coupon/update`,
     dashboard: "coupon/dashboard",
-  },
-  user: {
-    search: (name) => `user/search/${name}`,
   },
   customer: {
     list: "profile/customerdetails",
@@ -106,9 +102,14 @@ export const API_URLS = {
       `restaurant?FoodId=${foodId}&RestaurantId=${restaurantId}`,
   },
   user: {
+    list: "/user",
+    listDevices: "/user/Devices",
+    search: (name) => `user/search/${name}`,
     dashboard: (userId) => "plan/UserPlans/" + userId,
     exerciseDashboard: (userId) => "plan/UserExercisePlans/" + userId,
     mindDashboard: (userId) => "plan/UserMindPlans/" + userId,
+    sendEmail: "/login/PortalEmail",
+    sendPush:  "/firebase/PortalNotifications",
   },
   staff: {
     list: "staff",

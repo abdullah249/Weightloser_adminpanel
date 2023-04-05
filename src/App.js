@@ -23,6 +23,8 @@ import "scss/style.scss";
 import { Suspense } from "react";
 import BlogDetailsPage from "pages/blogs/details";
 import LoginPage from "pages/auth/login";
+import {ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
@@ -76,6 +78,7 @@ function AppBase() {
           </Suspense>
         </BrowserRouter>
       </Provider>
+      <ToastContainer />
       <Toaster />
     </div>
   );

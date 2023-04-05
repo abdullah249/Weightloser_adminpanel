@@ -121,10 +121,10 @@ const ExerciseForm = () => {
                     placeholder="Plan Name"
                   />
                   <Input
-                    error={touched["Description"] && errors["Description"]}
+                    error={touched["Details"] && errors["Details"]}
                     placeholder="Description"
-                    name="Description"
-                    value={values["Description"]}
+                    name="Details"
+                    value={values["Details"]}
                     onChange={handleChange}
                     onBlur={handleBlur}
                   />
@@ -136,10 +136,10 @@ const ExerciseForm = () => {
                     options={categories}
                     idParam="Description"
                     label="Description"
-                    name="Details"
-                    value={values["Details"]}
+                    name="Description"
+                    value={values["Description"]}
                     placeholder="Category"
-                    error={touched["Details"] && errors["Details"]}
+                    error={touched["Description"] && errors["Description"]}
                   />
                   <Select
                     onChange={handleChange}

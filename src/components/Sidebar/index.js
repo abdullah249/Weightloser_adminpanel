@@ -4,10 +4,10 @@ import Close from "icons/Close";
 import { NAV_ITEMS } from "./navItems";
 import { useLocation } from "react-router-dom";
 import classNames from "classnames";
-import { SearchInput } from "components/Header";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
+import Notifications from "../Notifications";
 
 const NavItem = ({ icon, text, href, active, ...rest }) => {
   return (
@@ -26,6 +26,11 @@ const NavItem = ({ icon, text, href, active, ...rest }) => {
   );
 };
 
+const alias= {
+  Email: "Send Email",
+  Notification: "Send Push",
+}
+let notificationType = ""
 const Sidebar = ({
   isSidebarOpen,
   toggleSidebar,
@@ -35,6 +40,7 @@ const Sidebar = ({
   const navigate = useNavigate();
   const location = useLocation();
   const [items, setItems] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -43,11 +49,22 @@ const Sidebar = ({
     if (user) {
       try {
         let roles = user.Roles ? JSON.parse(user.Roles) : {};
-        roles = Object.keys(roles);
+        roles = [...Object.keys(roles), 'Email', 'Notification'];
         setItems(NAV_ITEMS.filter((m) => m.public || roles.includes(m.title)));
       } catch (ex) {}
     }
-  }, [user]);
+  }, [user, navigate]);
+
+  useEffect(() => {
+    const {hash} = location;
+    notificationType = hash.substring(1);
+    ["email", "push"].includes(notificationType) ? setIsOpen(true) : setIsOpen(false)
+  }, [location])
+
+  const closeHandler = () => {
+    setIsOpen(!isOpen);
+    navigate(location.pathname)
+  }
 
   return (
     <div
@@ -67,7 +84,7 @@ const Sidebar = ({
         {items.map((m) => (
           <NavItem
             key={m.title}
-            text={m.title}
+            text={alias[m.title] || m.title}
             href={m.href}
             active={m.href && m.href === location.pathname}
             icon={m.icon}
@@ -78,6 +95,7 @@ const Sidebar = ({
           <NavItem href="#" text="Logout" />
         </div> */}
       </div>
+      <Notifications isOpen={isOpen} setIsOpen={closeHandler} type={notificationType} />
     </div>
   );
 };
