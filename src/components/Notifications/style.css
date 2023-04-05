@@ -1,0 +1,82 @@
+
+.compose-mail-form-field {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+}
+.compose-mail-form-field label {
+    font-size: 1rem;
+}
+
+.compose-mail-form-field .form-label {
+     margin-bottom: 0;
+}
+.compose-mail-form-field .form-control {
+    border: 0;
+    background-color: transparent;
+}
+.compose-mail-form-field .form-control:focus {
+    box-shadow: none !important;
+    background-color: transparent;
+}
+
+.compose-mail-form-field {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(34, 41, 47, 0.05);
+}
+
+#message-editor {
+    height: 33vh
+}
+.editor {
+    height: calc(100% - 3rem);
+}
+#message-editor .rdw-editor-wrapper{
+    height: 100%;
+}
+#message-editor .rdw-editor-main {
+    height: 90%;
+}
+
+.modal-body .compose-form {
+    min-height: 400px;
+}
+
+.compose-footer-wrapper {
+    padding: 0.8rem 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.css-13cymwt-control {
+    border: none !important;
+}
+.react-select .select__control--is-focused {
+    border: none !important;
+    box-shadow: none !important;
+    background-color: transparent;
+}
+.avatar .avatar-content {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.857rem;
+    border-radius: 50%;
+    cursor: pointer;
+    text-align: center;
+}
+
+.react-draft-wysiwyg-editor {
+    z-index: 1;
+}
+
+.react-select__menu {
+    z-index: 99;
+}
+.DraftEditor-editorContainer {
+    z-index: 0 !important;
+}
